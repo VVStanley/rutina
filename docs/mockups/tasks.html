@@ -54,6 +54,16 @@
 #rutina-task-flow .rt-list { display:grid; gap:6px; }
 #rutina-task-flow .rt-row { width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; text-align:left; }
 #rutina-task-flow .rt-row strong { display:block; overflow-wrap:anywhere; }
+#rutina-task-flow .rt-priority::before {
+  content:""; display:inline-block; width:.8em; height:.8em; margin-inline-end:5px;
+  border-radius:50%; vertical-align:-.02em;
+  background:light-dark(#eab308,#facc15);
+  box-shadow:inset 0 0 0 1px light-dark(#a16207,transparent);
+}
+#rutina-task-flow .rt-priority-high::before {
+  background:light-dark(#dc2626,#f87171);
+  box-shadow:none;
+}
 #rutina-task-flow .rt-row small { display:block; color:var(--muted); font-size:12px; }
 #rutina-task-flow .rt-row .rt-late { color:var(--error); }
 #rutina-task-flow .rt-wide { width:100%; margin-top:12px; }
@@ -119,6 +129,11 @@
           <label id="tf-time-row" hidden>Время <span class="rt-muted">(необязательно)</span><input type="time" id="tf-time" disabled></label>
         </div>
         <label>Для кого<select id="tf-person"><option>Семья</option><option>Марина</option><option>Алексей</option></select></label>
+        <label>Приоритет<select id="tf-priority">
+          <option value="minimal">Минимальный</option>
+          <option value="medium">Средний</option>
+          <option value="high">Высокий</option>
+        </select></label>
         <label>Повтор<select id="tf-repeat">
           <option value="">Без повторения</option>
           <option value="1">Раз в месяц</option>
@@ -142,21 +157,26 @@
   const all = selector => root.querySelectorAll(selector);
   const today = '2026-11-19';
   const tasks = [
-    {id:1,name:'Забрать посылку',date:'2026-11-17',time:'',person:'Семья',repeat:'',comment:'Проверить часы работы пункта выдачи.',done:''},
-    {id:2,name:'Заменить фильтр',date:'2026-11-20',time:'18:30',person:'Семья',repeat:'2',comment:'Перед заменой перекрыть подачу воды.',done:''},
-    {id:3,name:'Разобрать шкаф',date:'',time:'',person:'Марина',repeat:'',comment:'',done:''},
-    {id:4,name:'Передать показания счётчиков',date:'2026-11-18',time:'',person:'Алексей',repeat:'',comment:'',done:'2026-11-18'}
+    {id:1,name:'Забрать посылку',date:'2026-11-17',time:'',person:'Семья',priority:'minimal',repeat:'',comment:'Проверить часы работы пункта выдачи.',done:''},
+    {id:2,name:'Заменить фильтр',date:'2026-11-20',time:'18:30',person:'Семья',priority:'medium',repeat:'2',comment:'Перед заменой перекрыть подачу воды.',done:''},
+    {id:3,name:'Разобрать шкаф',date:'',time:'',person:'Марина',priority:'minimal',repeat:'',comment:'',done:''},
+    {id:4,name:'Передать показания счётчиков',date:'2026-11-18',time:'',person:'Алексей',priority:'minimal',repeat:'',comment:'',done:'2026-11-18'},
+    {id:5,name:'Записаться к врачу',date:'2026-11-20',time:'19:00',person:'Марина',priority:'high',repeat:'',comment:'',done:''},
+    {id:6,name:'Полить цветы',date:'2026-11-20',time:'09:00',person:'Семья',priority:'minimal',repeat:'',comment:'',done:''}
   ];
   let screen = 'list';
   let filter = 'pending';
   let detailId;
   let editId;
-  let nextId = 5;
+  let nextId = 7;
   let offline = false;
 
   const formatter = new Intl.DateTimeFormat('ru', {day:'numeric', month:'long', timeZone:'UTC'});
   const dateLabel = date => formatter.format(new Date(date + 'T00:00:00Z'));
   const repeatLabels = Object.fromEntries(Array.from(get('repeat').options, option => [option.value, option.textContent]));
+  const priorityLabels = Object.fromEntries(Array.from(get('priority').options, option => [option.value, option.textContent]));
+  const priorityRank = {minimal:0, medium:1, high:2};
+  const comparePriority = (a, b) => priorityRank[b.priority] - priorityRank[a.priority];
   const detail = () => tasks.find(task => task.id === detailId);
 
   function row(task) {
@@ -172,7 +192,12 @@
     button.className = 'rt-row';
     name.textContent = task.name;
     meta.textContent = [when, task.person, task.repeat ? repeatLabels[task.repeat] : ''].filter(Boolean).join(' · ');
-    if (late) meta.className = 'rt-late';
+    if (!task.done && task.priority !== 'minimal') {
+      meta.classList.add('rt-priority', 'rt-priority-' + task.priority);
+      button.setAttribute('aria-label', [task.name, meta.textContent,
+        'Приоритет: ' + priorityLabels[task.priority].toLowerCase()].join('. '));
+    }
+    if (late) meta.classList.add('rt-late');
     arrow.setAttribute('aria-hidden', 'true');
     arrow.textContent = '›';
     copy.append(name, meta);
@@ -187,8 +212,9 @@
   function renderList() {
     const pending = filter === 'pending';
     const active = tasks.filter(task => !task.done);
-    const dated = active.filter(task => task.date).sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time));
-    const undated = active.filter(task => !task.date);
+    const dated = active.filter(task => task.date).sort((a, b) =>
+      a.date.localeCompare(b.date) || comparePriority(a, b) || a.time.localeCompare(b.time));
+    const undated = active.filter(task => !task.date).sort(comparePriority);
     const done = tasks.filter(task => task.done).sort((a,b) => b.done.localeCompare(a.done));
     all('[data-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filter === filter)));
     get('dated').hidden = !pending || !dated.length;
@@ -263,6 +289,7 @@
     get('date').value = task?.date || '';
     get('time').value = task?.time || '';
     get('person').value = task?.person || 'Семья';
+    get('priority').value = task?.priority || 'minimal';
     get('repeat').value = task?.repeat || '';
     get('comment').value = task?.comment || '';
     showError('');
@@ -297,7 +324,7 @@
     }
     const fields = {
       name, date, time:date ? get('time').value : '', person:get('person').value,
-      repeat, comment:get('comment').value.trim()
+      priority:get('priority').value, repeat, comment:get('comment').value.trim()
     };
     if (editId) {
       Object.assign(detail(), fields);
