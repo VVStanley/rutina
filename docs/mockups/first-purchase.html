@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Рутина — Первый сценарий покупки</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0 auto; max-width: 920px; padding: 16px; font: 14px/1.45 system-ui, sans-serif; }
+    .vis-btn, .vis-form-select { padding: 6px 12px; border: 1px solid GrayText; border-radius: 8px; }
+    .vis-btn { cursor: pointer; }
+  </style>
+</head>
+<body>
+<div id="rutina-first-flow">
+<style>
+#rutina-first-flow {
+  color-scheme:light dark;
+  --surface:light-dark(#f6f8f3,#171d19);
+  --card:light-dark(#fff,#222a24);
+  --text:light-dark(#202d24,#ecf4ed);
+  --muted:light-dark(#4a5b50,#b7c6bb);
+  --line:light-dark(#dae3d9,#3d4a40);
+  --accent:light-dark(#154f3b,#b6edce);
+  --soft:light-dark(#dceee2,#2b4838);
+  --on-accent:light-dark(#fff,#13291e);
+  --error:light-dark(#8f3524,#ffbeaa);
+  font:14px/1.45 system-ui,sans-serif;
+}
+#rutina-first-flow * { box-sizing:border-box; }
+#rutina-first-flow [hidden] { display:none !important; }
+#rutina-first-flow .rf-controls { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:6px; max-width:680px; margin:0 auto 12px; }
+#rutina-first-flow .rf-controls button { min-height:36px; font:inherit; }
+#rutina-first-flow .rf-controls select { min-height:36px; }
+#rutina-first-flow .rf-controls [aria-pressed=true] { background:var(--soft); color:var(--accent); }
+#rutina-first-flow .rf-phone {
+  color:var(--text); background:var(--surface); border:1px solid var(--line);
+  border-radius:24px; overflow:hidden; max-width:410px; margin:auto; min-height:554px;
+  display:flex; flex-direction:column;
+}
+#rutina-first-flow .rf-top { padding:12px 14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--line); }
+#rutina-first-flow .rf-top h3 { margin:0; font-size:20px; }
+#rutina-first-flow .rf-body { flex:1; padding:14px 15px 18px; }
+#rutina-first-flow .rf-body h4 { margin:0 0 10px; font-size:16px; }
+#rutina-first-flow .rf-muted { font-size:12px; color:var(--muted); }
+#rutina-first-flow .rf-banner { margin:0 0 12px; padding:8px 10px; border:1px solid var(--line); border-radius:9px; background:var(--card); color:var(--muted); }
+#rutina-first-flow .rf-message { margin:8px 0; color:var(--error); }
+#rutina-first-flow .rf-phone button, #rutina-first-flow .rf-phone input, #rutina-first-flow .rf-phone select, #rutina-first-flow .rf-phone textarea {
+  font:inherit; min-height:44px; color:inherit; background:var(--card); border:1px solid var(--line); border-radius:9px; padding:7px 10px; min-width:0;
+}
+#rutina-first-flow .rf-phone button { cursor:pointer; }
+#rutina-first-flow .rf-phone .rf-primary { background:var(--accent); color:var(--on-accent); border-color:transparent; font-weight:680; }
+#rutina-first-flow .rf-phone button:disabled { background:var(--soft); color:var(--muted); cursor:default; }
+#rutina-first-flow .rf-phone :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+#rutina-first-flow .rf-phone .rf-back { border-color:transparent; background:transparent; padding:0 9px; }
+#rutina-first-flow .rf-form { display:grid; gap:9px; }
+#rutina-first-flow .rf-form label { display:grid; gap:3px; font-weight:630; }
+#rutina-first-flow .rf-form textarea { resize:vertical; }
+#rutina-first-flow .rf-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+#rutina-first-flow .rf-grid > label { min-width:0; }
+#rutina-first-flow .rf-summary { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px; margin-bottom:12px; }
+#rutina-first-flow .rf-summary p { margin:0; }
+#rutina-first-flow .rf-wide { width:100%; }
+#rutina-first-flow .rf-home-actions { margin-top:14px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+#rutina-first-flow .rf-home-actions .rf-secondary { min-height:44px; border:1px solid var(--line); border-radius:9px; padding:8px; color:var(--muted); text-align:center; }
+#rutina-first-flow .rf-home-actions .rf-secondary:last-child { grid-column:1 / -1; }
+#rutina-first-flow .rf-list { display:grid; gap:6px; }
+#rutina-first-flow .rf-row { width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; text-align:left; }
+#rutina-first-flow .rf-row strong { display:block; overflow-wrap:anywhere; }
+#rutina-first-flow .rf-facts { padding:3px 10px; margin:0; background:var(--card); border:1px solid var(--line); border-radius:10px; }
+#rutina-first-flow .rf-facts div { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; padding:7px 0; }
+#rutina-first-flow .rf-facts div + div { border-top:1px solid var(--line); }
+#rutina-first-flow .rf-facts dt { color:var(--muted); }
+#rutina-first-flow .rf-facts dd { margin:0; text-align:right; overflow-wrap:anywhere; }
+#rutina-first-flow .rf-facts .rf-comment { grid-template-columns:1fr; }
+#rutina-first-flow .rf-comment dd { text-align:left; white-space:pre-wrap; }
+#rutina-first-flow .rf-nav { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); align-items:stretch; padding:6px; border-top:1px solid var(--line); background:var(--card); }
+#rutina-first-flow .rf-nav button, #rutina-first-flow .rf-nav span { display:grid; place-items:center; text-align:center; color:var(--muted); font-size:11px; padding:0 2px; border-color:transparent; }
+#rutina-first-flow .rf-nav [aria-current=page] { background:var(--soft); color:var(--accent); font-weight:700; }
+</style>
+<div class="rf-controls" role="group" aria-label="Управление демонстрацией">
+  <button type="button" class="vis-btn" data-phone="0" aria-pressed="true">Телефон 1</button>
+  <button type="button" class="vis-btn" data-phone="1" aria-pressed="false">Телефон 2</button>
+  <button type="button" class="vis-btn" id="rf-offline" aria-pressed="false">Без сети</button>
+  <button type="button" class="vis-btn" id="rf-restart">Перезапустить</button>
+  <button type="button" class="vis-btn" id="rf-drop" aria-pressed="false">Потерять ответ при сохранении</button>
+  <label for="rf-language">RU / EN</label>
+  <select id="rf-language" class="vis-form-select"><option value="ru">Русский</option><option value="en">English</option></select>
+</div>
+<div class="rf-phone" lang="ru" id="rf-phone">
+  <header class="rf-top"><button type="button" class="rf-back" id="rf-back" aria-label="Назад" hidden>←</button><h3 id="rf-title" tabindex="-1">Вход</h3></header>
+  <div class="rf-body">
+    <p class="rf-banner" id="rf-offline-note" data-copy="offlineRead" hidden>Без сети. Доступен просмотр сохранённых данных.</p>
+    <section data-screen="login">
+      <form class="rf-form" id="rf-login" novalidate>
+        <label><span data-copy="email">Почта</span><input type="email" id="rf-email" autocomplete="off" required></label>
+        <label><span data-copy="password">Пароль</span><input type="password" id="rf-password" autocomplete="off" required></label>
+        <p class="rf-message" id="rf-login-error" role="alert" hidden></p>
+        <button type="submit" class="rf-primary" data-copy="signIn">Войти</button>
+      </form>
+    </section>
+    <section data-screen="home" hidden>
+      <p class="rf-muted" id="rf-home-last" hidden></p>
+      <h4 data-copy="upcoming">Что предстоит</h4>
+      <p class="rf-muted" data-copy="noUpcoming">Ближайших записей пока нет.</p>
+      <div class="rf-home-actions">
+        <span class="rf-secondary" data-copy="addTask">Добавить дело</span>
+        <button type="button" class="rf-primary" data-add data-copy="addPurchase">Добавить покупку</button>
+        <span class="rf-secondary" data-copy="report">Посмотреть отчёт</span>
+      </div>
+    </section>
+    <section data-screen="purchases" hidden>
+      <div class="rf-summary">
+        <p class="rf-muted" id="rf-last"></p>
+        <button type="button" id="rf-refresh" data-copy="refresh">Обновить</button>
+      </div>
+      <p class="rf-message" id="rf-refresh-error" data-copy="refreshError" role="alert" hidden>Не удалось обновить.</p>
+      <h4 data-copy="boughtPlural">Купленные</h4>
+      <p class="rf-muted" id="rf-empty" data-copy="noPurchases">Купленных покупок пока нет.</p>
+      <div class="rf-list" id="rf-list"></div>
+      <button type="button" class="rf-primary rf-wide" style="margin-top:12px" data-add data-copy="addPurchase">Добавить покупку</button>
+    </section>
+    <section data-screen="new" hidden>
+      <form class="rf-form" id="rf-new" novalidate>
+        <label><span data-copy="name">Название</span><input id="rf-name" required></label>
+        <div class="rf-grid">
+          <label><span data-copy="amount">Сумма, ₽</span><input id="rf-amount" inputmode="decimal" required placeholder="0,00"></label>
+          <label><span data-copy="purchaseDate">Дата покупки</span><input id="rf-date" type="date" required></label>
+        </div>
+        <label><span data-copy="category">Категория</span>
+          <select id="rf-category" required>
+            <option value="" data-copy="chooseCategory">Выберите категорию</option>
+            <option value="supplies">Дом → Хозтовары</option>
+          </select>
+        </label>
+        <label><span data-copy="recipient">Получатель</span>
+          <select id="rf-recipient"><option value="" data-copy="family">Семья</option><option value="Марина">Марина</option><option value="Алексей">Алексей</option></select>
+        </label>
+        <label><span data-copy="commentOptional">Комментарий (необязательно)</span><textarea id="rf-comment" rows="2"></textarea></label>
+        <p class="rf-message" id="rf-form-error" role="alert" hidden></p>
+        <button type="submit" class="rf-primary" id="rf-save" data-copy="save">Сохранить</button>
+        <button type="button" id="rf-check" data-copy="checkResult" hidden>Проверить результат</button>
+      </form>
+    </section>
+    <section data-screen="detail" hidden>
+      <div class="rf-summary"><h4 id="rf-detail-name"></h4><span class="rf-muted" data-copy="bought">Куплена</span></div>
+      <dl class="rf-facts">
+        <div><dt data-copy="actualAmount">Фактическая сумма</dt><dd id="rf-detail-amount"></dd></div>
+        <div><dt data-copy="purchaseDate">Дата покупки</dt><dd id="rf-detail-date"></dd></div>
+        <div><dt data-copy="category">Категория</dt><dd id="rf-detail-category"></dd></div>
+        <div><dt data-copy="recipient">Получатель</dt><dd id="rf-detail-recipient"></dd></div>
+        <div class="rf-comment" id="rf-detail-comment-row"><dt data-copy="comment">Комментарий</dt><dd id="rf-detail-comment"></dd></div>
+      </dl>
+    </section>
+  </div>
+  <nav class="rf-nav" id="rf-nav" aria-label="Разделы приложения" hidden>
+    <button type="button" data-nav="home" data-copy="home">Главная</button>
+    <button type="button" data-nav="purchases" data-copy="purchases">Покупки</button>
+    <span data-copy="tasks">Дела</span><span data-copy="calendar">Календарь</span><span data-copy="account">Кабинет</span>
+  </nav>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('rutina-first-flow');
+  const get = id => root.querySelector('#rf-' + id);
+  const all = selector => root.querySelectorAll(selector);
+  const ru = {
+    login:'Вход', email:'Почта', password:'Пароль', signIn:'Войти', home:'Главная', purchases:'Покупки',
+    new:'Новая купленная покупка', detail:'Покупка', tasks:'Дела', calendar:'Календарь', account:'Кабинет',
+    upcoming:'Что предстоит', noUpcoming:'Ближайших записей пока нет.', addTask:'Добавить дело',
+    addPurchase:'Добавить покупку', report:'Посмотреть отчёт', refresh:'Обновить', boughtPlural:'Купленные',
+    noPurchases:'Купленных покупок пока нет.', unknownList:'Подключитесь к интернету и обновите список.',
+    refreshError:'Не удалось обновить.', offlineRead:'Без сети. Доступен просмотр сохранённых данных.',
+    offlineLogin:'Для входа нужна связь с сервером.', loginError:'Проверьте почту и пароль.',
+    name:'Название', amount:'Сумма, ₽', purchaseDate:'Дата покупки', category:'Категория', chooseCategory:'Выберите категорию',
+    recipient:'Получатель', family:'Семья', commentOptional:'Комментарий (необязательно)', comment:'Комментарий',
+    save:'Сохранить', checkResult:'Проверить результат', bought:'Куплена', actualAmount:'Фактическая сумма',
+    noConfirmation:'Не удалось получить подтверждение. Изменение могло сохраниться.',
+    noCheck:'Для проверки результата нужна связь с сервером.', requiredName:'Введите название.',
+    requiredAmount:'Введите сумму в рублях с точностью до копеек.', requiredDate:'Укажите дату покупки с начала учёта по сегодняшний день.',
+    back:'Назад', updated:'Обновлено сегодня в '
+  };
+  const en = {
+    login:'Sign in', email:'Email', password:'Password', signIn:'Sign in', home:'Home', purchases:'Purchases',
+    new:'Record a purchase', detail:'Purchase', tasks:'Tasks', calendar:'Calendar', account:'Account',
+    upcoming:'Coming up', noUpcoming:'No upcoming items.', addTask:'Add task',
+    addPurchase:'Add purchase', report:'View report', refresh:'Refresh', boughtPlural:'Purchased',
+    noPurchases:'No purchases recorded yet.', unknownList:'Connect to the internet and refresh the list.',
+    refreshError:'Could not refresh.', offlineRead:'Offline. You can view saved data.',
+    offlineLogin:'Connect to the server to sign in.', loginError:'Check your email and password.',
+    name:'Name', amount:'Amount, RUB', purchaseDate:'Purchase date', category:'Category', chooseCategory:'Choose a category',
+    recipient:'For', family:'Family', commentOptional:'Comment (optional)', comment:'Comment',
+    save:'Save', checkResult:'Check result', bought:'Purchased', actualAmount:'Actual amount',
+    noConfirmation:'Confirmation was not received. The change may have been saved.',
+    noCheck:'Connect to the server to check the result.', requiredName:'Enter a name.',
+    requiredAmount:'Enter an amount in rubles with up to two decimal places.',
+    requiredDate:'Enter a purchase date between the start of tracking and today.', back:'Back', updated:'Updated today at '
+  };
+  const today = '2026-11-19';
+  const accountingStart = '2026-10-01';
+  const category = 'Дом → Хозтовары';
+  const testPassword = 'rutina-demo';
+  const newPhone = email => ({
+    email, signedIn:false, offline:false, screen:'login', previous:'home',
+    cached:[], stamp:'', refreshError:false, loginError:'', detail:null, pending:null, drop:false,
+    formError:'', draft:{name:'', amount:'', date:today, category:'', recipient:'', comment:''}
+  });
+  const phones = [newPhone('marina@example.com'), newPhone('alex@example.com')];
+  const server = [];
+  const fields = ['name', 'amount', 'date', 'category', 'recipient', 'comment'];
+  let current = 0;
+  let language = 'ru';
+  let simulatedMinutes = 30;
+  let nextId = 1;
+  const phone = () => phones[current];
+  const t = key => (language === 'ru' ? ru : en)[key];
+  const dateText = value => new Intl.DateTimeFormat(language, {day:'numeric', month:'long', year:'numeric', timeZone:'UTC'}).format(new Date(value + 'T00:00:00Z'));
+  const amountText = kopecks => new Intl.NumberFormat(language, {
+    style:'currency', currency:'RUB', minimumFractionDigits:0, maximumFractionDigits:2
+  }).format(kopecks / 100);
+
+  function message(id, key) {
+    const element = get(id);
+    element.hidden = !key;
+    element.textContent = key ? t(key) : '';
+  }
+
+  function renderList() {
+    const state = phone();
+    const last = get('last');
+    last.hidden = !state.stamp;
+    last.textContent = state.stamp ? t('updated') + state.stamp : '';
+    get('refresh-error').hidden = !state.refreshError;
+    get('empty').hidden = state.cached.length > 0;
+    get('empty').textContent = t(state.stamp ? 'noPurchases' : 'unknownList');
+    get('list').replaceChildren(...state.cached.map(record => {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'rf-row';
+      const info = document.createElement('span');
+      const title = document.createElement('strong');
+      const date = document.createElement('small');
+      const amount = document.createElement('strong');
+      title.textContent = record.name;
+      date.className = 'rf-muted';
+      date.textContent = dateText(record.date);
+      amount.textContent = amountText(record.kopecks);
+      info.append(title, date);
+      row.append(info, amount);
+      row.addEventListener('click', () => {
+        state.detail = record;
+        navigate('detail');
+      });
+      return row;
+    }));
+  }
+
+  function render() {
+    const state = phone();
+    const screen = state.screen;
+    get('phone').setAttribute('lang', language);
+    all('[data-copy]').forEach(node => { node.textContent = t(node.dataset.copy); });
+    all('[data-screen]').forEach(node => { node.hidden = node.dataset.screen !== screen; });
+    all('[data-phone]').forEach(node => node.setAttribute('aria-pressed', String(Number(node.dataset.phone) === current)));
+    all('[data-nav]').forEach(node => {
+      const selected = node.dataset.nav === (screen === 'home' ? 'home' : 'purchases');
+      if (selected) node.setAttribute('aria-current', 'page');
+      else node.removeAttribute('aria-current');
+    });
+    all('[data-add]').forEach(node => { node.disabled = state.offline; });
+    get('title').textContent = t(screen);
+    get('back').hidden = screen !== 'new' && screen !== 'detail';
+    get('back').setAttribute('aria-label', t('back'));
+    get('nav').hidden = screen !== 'home' && screen !== 'purchases';
+    get('offline').setAttribute('aria-pressed', String(state.offline));
+    get('drop').setAttribute('aria-pressed', String(state.drop));
+    get('offline-note').hidden = !state.offline || !state.signedIn;
+    const homeStamp = get('home-last');
+    homeStamp.hidden = !state.stamp;
+    homeStamp.textContent = state.stamp ? t('updated') + state.stamp : '';
+    for (const field of fields) get(field).disabled = Boolean(state.pending);
+    get('save').hidden = Boolean(state.pending);
+    get('save').disabled = state.offline;
+    get('check').hidden = !state.pending;
+    message('login-error', state.loginError);
+    message('form-error', state.formError);
+    if (screen === 'purchases') renderList();
+    if (screen === 'detail' && state.detail) {
+      const record = state.detail;
+      get('detail-name').textContent = record.name;
+      get('detail-amount').textContent = amountText(record.kopecks);
+      get('detail-date').textContent = dateText(record.date);
+      get('detail-category').textContent = category;
+      get('detail-recipient').textContent = record.recipient || t('family');
+      get('detail-comment-row').hidden = !record.comment;
+      get('detail-comment').textContent = record.comment;
+    }
+  }
+
+  function loadLogin() {
+    get('email').value = phone().email;
+    get('password').value = testPassword;
+  }
+
+  function loadDraft() {
+    for (const field of fields) get(field).value = phone().draft[field];
+  }
+
+  function captureDraft() {
+    for (const field of fields) phone().draft[field] = get(field).value;
+  }
+
+  function refresh() {
+    const state = phone();
+    state.refreshError = state.offline;
+    if (state.offline) return;
+    state.cached = server.slice().reverse();
+    const minute = simulatedMinutes++;
+    const hours = String(12 + Math.floor(minute / 60)).padStart(2, '0');
+    state.stamp = hours + ':' + String(minute % 60).padStart(2, '0');
+  }
+
+  function navigate(screen, fetchLatest = false) {
+    phone().screen = screen;
+    if (fetchLatest) refresh();
+    render();
+    get('title').focus();
+  }
+
+  function clearDraft() {
+    const state = phone();
+    state.draft = {name:'', amount:'', date:today, category:'', recipient:'', comment:''};
+    state.formError = '';
+    state.pending = null;
+  }
+
+  function confirmLocal(record) {
+    const state = phone();
+    if (!state.cached.some(item => item.id === record.id)) state.cached.unshift(record);
+    clearDraft();
+    navigate('purchases');
+  }
+
+  all('[data-phone]').forEach(button => button.addEventListener('click', () => {
+    if (phone().screen === 'new') captureDraft();
+    current = Number(button.dataset.phone);
+    if (phone().screen === 'login') loadLogin();
+    if (phone().screen === 'new') loadDraft();
+    render();
+  }));
+  get('language').addEventListener('change', () => {
+    language = get('language').value;
+    render();
+  });
+  get('offline').addEventListener('click', () => {
+    phone().offline = !phone().offline;
+    render();
+  });
+  get('drop').addEventListener('click', () => {
+    phone().drop = !phone().drop;
+    render();
+  });
+  get('restart').addEventListener('click', () => {
+    clearDraft();
+    const state = phone();
+    state.detail = null;
+    if (state.signedIn) navigate('home', !state.offline);
+    else {
+      loadLogin();
+      navigate('login');
+    }
+  });
+  get('login').addEventListener('submit', event => {
+    event.preventDefault();
+    const state = phone();
+    state.loginError = state.offline ? 'offlineLogin' :
+      (get('email').value.trim() !== state.email || get('password').value !== testPassword ? 'loginError' : '');
+    if (state.loginError) return render();
+    state.signedIn = true;
+    navigate('home', true);
+  });
+  all('[data-nav]').forEach(button => button.addEventListener('click', () => {
+    const next = button.dataset.nav;
+    navigate(next, !phone().offline && next !== phone().screen);
+  }));
+  all('[data-add]').forEach(button => button.addEventListener('click', () => {
+    if (phone().offline) return;
+    phone().previous = phone().screen;
+    clearDraft();
+    loadDraft();
+    navigate('new');
+  }));
+  get('back').addEventListener('click', () => {
+    if (phone().screen === 'detail') return navigate('purchases');
+    const next = phone().previous;
+    clearDraft();
+    navigate(next);
+  });
+  get('refresh').addEventListener('click', () => {
+    refresh();
+    renderList();
+  });
+  get('date').min = accountingStart;
+  get('date').max = today;
+  get('new').addEventListener('submit', event => {
+    event.preventDefault();
+    const state = phone();
+    if (state.offline || state.pending) return;
+    captureDraft();
+    const {name, amount, date, category: selectedCategory, recipient, comment} = state.draft;
+    const integral = amount.trim().match(/^([0-9]+)(?:[,.]([0-9]{1,2}))?$/);
+    const kopecks = integral && (Number(integral[1]) * 100 + Number((integral[2] || '').padEnd(2, '0')));
+    const error = !name.trim() ? ['name','requiredName'] :
+      !integral || !Number.isSafeInteger(kopecks) ? ['amount','requiredAmount'] :
+      !date || date < accountingStart || date > today ? ['date','requiredDate'] :
+      !selectedCategory ? ['category','chooseCategory'] : null;
+    if (error) {
+      state.formError = error[1];
+      render();
+      get(error[0]).focus();
+      return;
+    }
+    const record = {id:nextId++, name:name.trim(), kopecks, date, recipient, comment:comment.trim()};
+    server.push(record);
+    if (state.drop) {
+      state.drop = false;
+      state.pending = record.id;
+      state.formError = 'noConfirmation';
+      render();
+      get('check').focus();
+    } else {
+      confirmLocal(record);
+    }
+  });
+  get('check').addEventListener('click', () => {
+    const state = phone();
+    if (!state.pending) return;
+    if (state.offline) {
+      state.formError = 'noCheck';
+      return render();
+    }
+    const confirmed = server.find(record => record.id === state.pending);
+    if (confirmed) confirmLocal(confirmed);
+  });
+  loadLogin();
+  render();
+})();
+</script>
+</div>
+</body>
+</html>

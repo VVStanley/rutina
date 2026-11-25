@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Рутина — обязательные платежи и расписания</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0 auto; max-width: 920px; padding: 16px; font: 14px/1.45 system-ui, sans-serif; }
+    .vis-btn, .vis-form-select { padding: 6px 12px; border: 1px solid GrayText; border-radius: 8px; }
+    .vis-btn { cursor: pointer; }
+  </style>
+</head>
+<body>
+<div id="rutina-payment-workflow">
+<style>
+#rutina-payment-workflow [hidden] { display:none !important; }
+#rutina-payment-workflow .rw-toolbar { display:flex; justify-content:center; margin:0 0 7px; }
+</style>
+<div class="rw-toolbar"><a class="vis-btn" href="review-index.html">Все макеты</a><button type="button" class="vis-btn" id="rw-offline" aria-pressed="false">Без сети</button></div>
+<div id="rw-schedule-panel" hidden>
+<div id="rutina-schedules">
+<style>
+#rutina-schedules {
+  color-scheme:light dark;
+  --surface:light-dark(#f6f8f3,#171d19); --card:light-dark(#fff,#222a24);
+  --ink:light-dark(#202d24,#ecf4ed); --muted:light-dark(#4a5b50,#b7c6bb);
+  --line:light-dark(#dae3d9,#3d4a40); --accent:light-dark(#154f3b,#b6edce);
+  --soft:light-dark(#dceee2,#2b4838); --on-accent:light-dark(#fff,#13291e);
+  --error:light-dark(#8f3524,#ffbeaa);
+  font:14px/1.4 system-ui,sans-serif;
+}
+#rutina-schedules * { box-sizing:border-box; }
+#rutina-schedules [hidden] { display:none !important; }
+#rutina-schedules .rs-controls { display:flex; justify-content:center; flex-wrap:wrap; gap:7px; margin-bottom:12px; }
+#rutina-schedules .rs-controls [aria-pressed=true] { background:var(--soft); color:var(--accent); }
+#rutina-schedules .rs-phone { margin:auto; max-width:430px; min-height:555px; border:1px solid var(--line); border-radius:24px; overflow:hidden; background:var(--surface); color:var(--ink); }
+#rutina-schedules .rs-bar { min-height:59px; padding:8px 14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--line); }
+#rutina-schedules h3 { margin:0; font-size:21px; }
+#rutina-schedules h4 { margin:0 0 7px; font-size:16px; }
+#rutina-schedules .rs-name { font-size:23px; overflow-wrap:anywhere; }
+#rutina-schedules .rs-body { padding:14px 14px 17px; }
+#rutina-schedules .rs-phone button, #rutina-schedules input, #rutina-schedules select { min-width:0; min-height:44px; padding:7px 9px; border:1px solid var(--line); border-radius:9px; font:inherit; color:inherit; background:var(--card); }
+#rutina-schedules .rs-phone button { cursor:pointer; }
+#rutina-schedules .rs-phone button:disabled { background:var(--soft); color:var(--muted); cursor:default; }
+#rutina-schedules .rs-phone :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+#rutina-schedules .rs-phone .rs-primary { background:var(--accent); border-color:transparent; color:var(--on-accent); font-weight:680; }
+#rutina-schedules .rs-phone .rs-back { background:transparent; border-color:transparent; }
+#rutina-schedules .rs-muted { color:var(--muted); font-size:12px; }
+#rutina-schedules .rs-error { color:var(--error); }
+#rutina-schedules .rs-note { margin:0 0 10px; padding:8px 9px; border:1px solid var(--line); border-radius:9px; background:var(--card); }
+#rutina-schedules .rs-field { display:grid; gap:3px; min-width:0; font-weight:625; }
+#rutina-schedules .rs-field input, #rutina-schedules .rs-field select { width:100%; }
+#rutina-schedules .rs-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+#rutina-schedules .rs-section { margin-top:14px; }
+#rutina-schedules .rs-list, #rutina-schedules .rs-actions, #rutina-schedules .rs-form { display:grid; gap:7px; }
+#rutina-schedules .rs-actions { margin-top:12px; }
+#rutina-schedules .rs-payments { margin:0; padding:0; list-style:none; }
+#rutina-schedules .rs-row { width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:7px; text-align:left; }
+#rutina-schedules .rs-row strong { display:block; overflow-wrap:anywhere; }
+#rutina-schedules .rs-row small { display:block; font-size:12px; color:var(--muted); }
+#rutina-schedules .rs-payments li { min-height:42px; padding:5px 0; }
+#rutina-schedules .rs-payments li + li { border-top:1px solid var(--line); }
+#rutina-schedules .rs-facts { padding:3px 9px; margin:0 0 10px; border:1px solid var(--line); border-radius:9px; background:var(--card); }
+#rutina-schedules .rs-facts div { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; padding:7px 0; }
+#rutina-schedules .rs-facts div + div { border-top:1px solid var(--line); }
+#rutina-schedules .rs-facts dt { color:var(--muted); font-size:12px; }
+#rutina-schedules .rs-facts dd { margin:0; text-align:right; overflow-wrap:anywhere; }
+#rutina-schedules .rs-form p { margin:0; }
+</style>
+<div class="rs-controls" id="rs-test-controls" role="group" aria-label="Проверка сценариев" hidden>
+  <button type="button" class="vis-btn" id="rs-race" hidden>Проверить оплату с другого телефона</button>
+</div>
+<div class="rs-phone" lang="ru">
+  <header class="rs-bar">
+    <button type="button" class="rs-back" id="rs-back" aria-label="Назад">←</button>
+    <h3 id="rs-title" tabindex="-1">Расписания платежей</h3>
+  </header>
+  <div class="rs-body">
+    <p id="rs-offline-note" class="rs-note rs-muted" hidden>Без сети. Доступен просмотр загруженных расписаний.</p>
+    <section data-screen="list">
+      <div class="rs-list" id="rs-schedules"></div>
+      <div class="rs-actions"><button type="button" class="rs-primary" id="rs-add">Создать расписание</button></div>
+    </section>
+    <section data-screen="detail" hidden>
+      <h4 class="rs-name" id="rs-name"></h4>
+      <dl class="rs-facts">
+        <div><dt>Повторение</dt><dd id="rs-cadence"></dd></div>
+        <div><dt>Первый платёж</dt><dd id="rs-first"></dd></div>
+        <div><dt>Дата окончания</dt><dd id="rs-end"></dd></div>
+      </dl>
+      <div class="rs-actions">
+        <button type="button" class="rs-primary" id="rs-edit">Изменить с выбранного месяца</button>
+        <button type="button" id="rs-shorten">Остановить или сократить</button>
+        <a class="vis-btn" id="rs-annual" href="payment-amounts.html" hidden>Суммы платежей на год</a>
+      </div>
+      <section class="rs-section" aria-labelledby="rs-payments-title">
+        <h4 id="rs-payments-title">Платежи по расписанию</h4>
+        <ul class="rs-payments" id="rs-payments"></ul>
+        <p class="rs-muted" id="rs-payments-empty" hidden>Платежей по этому расписанию пока нет.</p>
+      </section>
+    </section>
+    <section data-screen="form" hidden>
+      <form id="rs-schedule-form" class="rs-form" novalidate>
+        <div class="rs-grid" id="rs-effective-field" hidden>
+          <label class="rs-field">Применить с месяца<input type="month" id="rs-effective"></label>
+          <p class="rs-muted">Оплаченные, просроченные и индивидуально изменённые платежи сохраняются.</p>
+        </div>
+        <label class="rs-field">Название<input id="rs-form-name" type="text" required></label>
+        <div class="rs-grid" id="rs-cadence-fields">
+          <label class="rs-field">Повторение<select id="rs-form-cadence">
+            <option value="monthly">Ежемесячно</option><option value="yearly">Ежегодно</option>
+          </select></label>
+          <label class="rs-field">Дата первого платежа<input type="date" id="rs-form-first" required></label>
+        </div>
+        <label class="rs-field" id="rs-end-field"><span>Дата окончания <small class="rs-muted">(необязательно)</small></span><input type="date" id="rs-form-end"></label>
+        <label class="rs-field"><span>Общий ориентир, ₽ <small class="rs-muted">(необязательно)</small></span><input id="rs-form-amount" inputmode="decimal"></label>
+        <label class="rs-field">Категория<select id="rs-form-category" required>
+          <option value="">Выберите категорию</option><option>Дом → Связь</option><option>Дом → ЖКУ</option><option>Страхование</option>
+        </select></label>
+        <label class="rs-field">Получатель<select id="rs-form-person"><option>Семья</option><option>Марина</option><option>Алексей</option></select></label>
+        <p class="rs-error" id="rs-form-error" role="alert" hidden></p>
+        <button type="submit" id="rs-save" class="rs-primary">Сохранить</button>
+      </form>
+    </section>
+    <section data-screen="cutoff" hidden>
+      <form class="rs-form" id="rs-cutoff-form" novalidate>
+        <p class="rs-note" id="rs-cutoff-context"></p>
+        <label class="rs-field">Дата окончания<input id="rs-cutoff-date" type="date" required></label>
+        <p class="rs-muted">Будущие неоплаченные платежи после этой даты можно исключить из плана.</p>
+        <p class="rs-error" id="rs-cutoff-error" role="alert" hidden></p>
+        <button type="submit" class="rs-primary" id="rs-preview">Посмотреть изменения</button>
+      </form>
+    </section>
+    <section data-screen="confirm" hidden>
+      <h4 id="rs-confirm-name"></h4>
+      <p class="rs-note" id="rs-confirm-date"></p>
+      <p class="rs-note" id="rs-list-changed" role="alert" hidden>Один из платежей уже оплатили. Проверьте обновлённый список и подтвердите его ещё раз.</p>
+      <section aria-labelledby="rs-remove-title">
+        <h4 id="rs-remove-title">Уберутся из плана</h4>
+        <ul class="rs-payments" id="rs-remove-list"></ul>
+        <p class="rs-muted" id="rs-remove-empty" hidden>Будущих платежей для исключения нет.</p>
+        <p class="rs-muted" id="rs-more" hidden></p>
+      </section>
+      <section class="rs-section" id="rs-kept" aria-labelledby="rs-kept-title" hidden>
+        <h4 id="rs-kept-title">Оплаченные и просроченные сохранятся</h4>
+        <ul class="rs-payments" id="rs-kept-list"></ul>
+      </section>
+      <div class="rs-actions">
+        <button type="button" class="rs-primary" id="rs-confirm">Подтвердить окончание</button>
+        <button type="button" id="rs-cancel">Отмена</button>
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('rutina-schedules');
+  const workflow = document.getElementById('rutina-payment-workflow');
+  const get = id => root.querySelector('#rs-' + id);
+  const all = selector => root.querySelectorAll(selector);
+  const today = '2026-11-19';
+  const monthNow = today.slice(0, 7);
+  const schemes = [
+    {
+      id:1, first:'2026-10-20', cadence:'monthly', end:'2027-04-30', endAtCreation:'2027-04-30',
+      base:{name:'Интернет', cents:85000, category:'Дом → Связь', person:'Семья'}, changes:[],
+      manual:{'2026-12':{cents:93000}},
+      paid:{'2026-11':{date:'2026-11-18', due:'2026-11-20', cents:87000, name:'Интернет', category:'Дом → Связь', person:'Семья'}}
+    },
+    {
+      id:2, first:'2026-12-15', cadence:'yearly', end:'', endAtCreation:'',
+      base:{name:'Страховка квартиры', cents:1200000, category:'Страхование', person:'Семья'},
+      changes:[], manual:{}, paid:{}
+    },
+    {
+      id:3, first:'2026-11-10', cadence:'monthly', end:'', endAtCreation:'',
+      base:{name:'Водоснабжение', cents:120000, category:'Дом → ЖКУ', person:'Семья'},
+      changes:[], manual:{}, paid:{}
+    },
+    {
+      id:4, first:'2026-12-31', cadence:'monthly', end:'', endAtCreation:'',
+      base:{name:'Домофон', cents:null, category:'Дом → ЖКУ', person:'Семья'},
+      changes:[], manual:{}, paid:{}
+    }
+  ];
+  let screen = 'list';
+  let selected;
+  let formMode = 'create';
+  let cutoff = '';
+  let confirmationKeys = '';
+  let changed = false;
+  let offline = false;
+  let nextId = 5;
+  let openedFromPayment = false;
+  let contextMonth = monthNow;
+  const currency = new Intl.NumberFormat('ru', {style:'currency', currency:'RUB', minimumFractionDigits:0, maximumFractionDigits:2});
+  const dateFormat = new Intl.DateTimeFormat('ru', {day:'numeric', month:'long', year:'numeric', timeZone:'UTC'});
+  const money = cents => cents === null ? 'Без суммы' : currency.format(cents / 100);
+  const dateText = value => dateFormat.format(new Date(value + 'T00:00:00Z'));
+  const cadenceText = cadence => cadence === 'yearly' ? 'Ежегодно' : 'Ежемесячно';
+  const monthIndex = value => {
+    const [year,month] = value.split('-').map(Number);
+    return year * 12 + month - 1;
+  };
+  function monthKey(index) {
+    return String(Math.floor(index / 12)).padStart(4, '0') + '-' + String(index % 12 + 1).padStart(2, '0');
+  }
+  function lastDay(month) {
+    const [year,number] = month.split('-').map(Number);
+    return new Date(Date.UTC(year, number, 0)).getUTCDate();
+  }
+  function dueDate(first, month) {
+    return month + '-' + String(Math.min(Number(first.slice(8)), lastDay(month))).padStart(2, '0');
+  }
+  function settings(scheme, month) {
+    return scheme.changes.findLast(change => change.month <= month)?.values || scheme.base;
+  }
+  function entries(scheme, through) {
+    const records = [];
+    const begin = monthIndex(scheme.first);
+    const step = scheme.cadence === 'yearly' ? 12 : 1;
+    for (let index = begin; index <= through; index += step) {
+      const month = monthKey(index);
+      const scheduled = dueDate(scheme.first, month);
+      const manual = scheme.manual[month];
+      const paid = scheme.paid[month];
+      const due = paid?.due || manual?.due || scheduled;
+      const late = due < today && !paid;
+      if (scheme.endAtCreation && scheduled > scheme.endAtCreation && !paid) continue;
+      if (scheme.end !== scheme.endAtCreation && scheme.end && due > scheme.end && !paid && !late) continue;
+      const data = late ? scheme.base : settings(scheme, month);
+      records.push({key:scheme.id + ':' + month, schemeId:scheme.id, cadence:scheme.cadence, month, ...data,
+        ...manual, ...paid, due, paid:paid?.date || '', late, manual:Boolean(manual)});
+    }
+    return records;
+  }
+  function horizon(scheme, date = today) {
+    const start = Math.max(monthIndex(scheme.first), monthIndex(date), monthIndex(today));
+    return start + (scheme.cadence === 'yearly' ? 84 : 18);
+  }
+  function nextPayments(scheme) {
+    const payments = entries(scheme,horizon(scheme));
+    const recent = payments.filter(payment => payment.late || payment.paid).slice(-3);
+    const upcoming = payments.filter(payment => !payment.late && !payment.paid).slice(0,6);
+    return [...recent,...upcoming];
+  }
+  function paymentStatus(payment) {
+    if (payment.paid) return 'Оплачен ' + dateText(payment.paid);
+    if (payment.late) return 'Просрочен';
+    return payment.manual ? 'Изменён отдельно' : 'Ожидает оплаты';
+  }
+  function displayRow(title, description, value, type) {
+    const node = document.createElement(type);
+    const copy = document.createElement('span');
+    const main = document.createElement('strong');
+    const meta = document.createElement('small');
+    const end = document.createElement('span');
+    node.className = 'rs-row';
+    main.textContent = title;
+    meta.textContent = description;
+    end.textContent = value;
+    copy.append(main,meta);
+    node.append(copy,end);
+    return node;
+  }
+  function paymentRow(payment) {
+    return displayRow(dateText(payment.due),paymentStatus(payment),money(payment.cents),'li');
+  }
+  function error(id, text) {
+    get(id).textContent = text;
+    get(id).hidden = !text;
+  }
+
+  function renderList() {
+    get('schedules').replaceChildren(...schemes.map(scheme => {
+      const meta = cadenceText(scheme.cadence) + (scheme.end ? ' · до ' + dateText(scheme.end) : '');
+      const row = displayRow(settings(scheme,'9999-12').name,meta,'›','button');
+      row.type = 'button';
+      row.addEventListener('click', () => { selected = scheme; open('detail'); });
+      return row;
+    }));
+  }
+  function renderDetail() {
+    const records = nextPayments(selected);
+    get('name').textContent = settings(selected,'9999-12').name;
+    get('cadence').textContent = cadenceText(selected.cadence);
+    get('first').textContent = dateText(selected.first);
+    get('end').textContent = selected.end ? dateText(selected.end) : 'Без даты окончания';
+    const annualDemo = {1: 'internet', 2: 'insurance'}[selected.id];
+    get('annual').hidden = !annualDemo;
+    get('annual').href = 'payment-amounts.html?schedule=' + (annualDemo || '')
+      + '&base=' + (settings(selected,'9999-12').cents ?? '') + (offline ? '&offline=1' : '');
+    get('payments').replaceChildren(...records.map(paymentRow));
+    get('payments-empty').hidden = records.length > 0;
+  }
+  function plan() {
+    const payments = entries(selected,horizon(selected,cutoff));
+    const after = payments.filter(payment => payment.due > cutoff);
+    return {
+      remove:after.filter(payment => !payment.paid && !payment.late),
+      protected:payments.filter(payment => payment.paid || payment.late).slice(-4)
+    };
+  }
+  const planKeys = plan => plan.remove.map(payment => payment.month).join(',');
+  function renderConfirm() {
+    const currentPlan = plan();
+    get('confirm-name').textContent = settings(selected,'9999-12').name;
+    get('confirm-date').textContent = 'Дата окончания — ' + dateText(cutoff) + '.';
+    get('list-changed').hidden = !changed;
+    get('remove-list').replaceChildren(...currentPlan.remove.slice(0,6).map(paymentRow));
+    get('remove-empty').hidden = currentPlan.remove.length > 0;
+    get('more').hidden = currentPlan.remove.length <= 6;
+    get('more').textContent = 'Показаны ближайшие платежи. Остальные будущие неоплаченные повторения после даты окончания также уберутся.';
+    get('kept').hidden = currentPlan.protected.length === 0;
+    get('kept-list').replaceChildren(...currentPlan.protected.map(paymentRow));
+    get('race').hidden = offline || !currentPlan.remove.some(payment => payment.cents !== null);
+    get('test-controls').hidden = get('race').hidden;
+    get('race').disabled = false;
+  }
+  function render() {
+    const titles = {list:'Расписания платежей', detail:'Расписание', form:formMode === 'create' ? 'Новое расписание' : 'Изменить расписание', cutoff:'Остановить или сократить', confirm:'Подтвердить окончание'};
+    get('title').textContent = titles[screen];
+    get('test-controls').hidden = true;
+    get('offline-note').hidden = !offline;
+    get('race').hidden = true;
+    for (const id of ['add','edit','shorten','save','preview','confirm']) get(id).disabled = offline;
+    all('[data-screen]').forEach(section => { section.hidden = section.dataset.screen !== screen; });
+    if (screen === 'list') renderList();
+    if (screen === 'detail') renderDetail();
+    if (screen === 'confirm') renderConfirm();
+  }
+  function open(next) { screen = next; render(); get('title').focus(); }
+
+  function fillSettings(values) {
+    get('form-name').value = values.name;
+    get('form-amount').value = values.cents === null ? '' : String(values.cents / 100).replace('.',',');
+    get('form-category').value = values.category;
+    get('form-person').value = values.person;
+  }
+  function openForm(mode) {
+    if (offline) return;
+    formMode = mode;
+    const edit = mode === 'edit';
+    get('effective-field').hidden = !edit;
+    get('cadence-fields').hidden = edit;
+    get('end-field').hidden = edit;
+    get('effective').value = contextMonth;
+    get('form-cadence').value = 'monthly';
+    get('form-first').value = '';
+    get('form-end').value = '';
+    fillSettings(edit ? settings(selected,contextMonth) : {name:'',cents:null,category:'',person:'Семья'});
+    error('form-error','');
+    open('form');
+  }
+
+
+  get('add').addEventListener('click', () => openForm('create'));
+  get('edit').addEventListener('click', () => openForm('edit'));
+  get('effective').addEventListener('change', () => {
+    if (get('effective').value) fillSettings(settings(selected,get('effective').value));
+  });
+  get('shorten').addEventListener('click', () => {
+    if (offline) return;
+    get('cutoff-context').textContent = settings(selected,'9999-12').name;
+    get('cutoff-date').value = selected.end && selected.end < today ? selected.end : today;
+    get('cutoff-date').max = selected.end || '';
+    error('cutoff-error','');
+    open('cutoff');
+  });
+  get('cancel').addEventListener('click', () => open('detail'));
+  get('back').addEventListener('click', () => {
+    if (screen === 'list' || (screen === 'detail' && openedFromPayment)) return workflow.returnToCalendar();
+    if (screen === 'form') return open(formMode === 'create' ? 'list' : 'detail');
+    open(screen === 'detail' ? 'list' : screen === 'confirm' ? 'cutoff' : 'detail');
+  });
+  get('schedule-form').addEventListener('submit', event => {
+    event.preventDefault();
+    if (offline || screen !== 'form') return;
+    const edit = formMode === 'edit';
+    const month = get('effective').value;
+    const first = get('form-first').value;
+    const end = get('form-end').value;
+    const name = get('form-name').value.trim();
+    const category = get('form-category').value;
+    const input = get('form-amount').value.trim();
+    const match = input.match(/^([0-9]+)(?:[,.]([0-9]{1,2}))?$/);
+    const cents = match ? Number(match[1]) * 100 + Number((match[2] || '').padEnd(2,'0')) : null;
+    const issue = edit && !/^[0-9]{4}-(0[1-9]|1[0-2])$/.test(month) ? 'Выберите месяц, с которого изменятся будущие платежи.' :
+      !name ? 'Введите название.' : !edit && !first ? 'Укажите дату первого платежа.' :
+      !edit && end && end < first ? 'Дата окончания должна быть не раньше первого платежа.' :
+      !category ? 'Выберите категорию.' : input && !Number.isSafeInteger(cents) ? 'Укажите сумму в рублях с точностью до копеек.' : '';
+    if (issue) { error('form-error',issue); return; }
+    const values = {name,cents,category,person:get('form-person').value};
+    if (edit) {
+      selected.changes = selected.changes.filter(change => change.month < month);
+      selected.changes.push({month,values});
+    } else {
+      selected = {id:nextId++,first,end,endAtCreation:end,cadence:get('form-cadence').value,base:values,changes:[],manual:{},paid:{}};
+      schemes.push(selected);
+    }
+    open('detail');
+  });
+  get('cutoff-form').addEventListener('submit', event => {
+    event.preventDefault();
+    if (offline || screen !== 'cutoff') return;
+    const value = get('cutoff-date').value;
+    if (!value || (selected.end && value > selected.end)) {
+      error('cutoff-error','Укажите дату окончания. При сокращении она должна быть не позже текущей.');
+      return;
+    }
+    cutoff = value;
+    confirmationKeys = planKeys(plan());
+    changed = false;
+    open('confirm');
+  });
+  get('race').addEventListener('click', () => {
+    if (offline || screen !== 'confirm' || get('race').disabled) return;
+    const record = plan().remove.find(payment => payment.cents !== null);
+    get('race').disabled = true;
+    if (record) selected.paid[record.month] = {
+      date:today, due:record.due, name:record.name, cents:record.cents, category:record.category, person:record.person
+    };
+  });
+  get('confirm').addEventListener('click', () => {
+    if (offline || screen !== 'confirm') return;
+    const latest = planKeys(plan());
+    if (latest !== confirmationKeys) {
+      confirmationKeys = latest;
+      changed = true;
+      render();
+      return;
+    }
+    selected.end = cutoff;
+    open('detail');
+  });
+  workflow.schedules = {
+    list(month, withoutNetwork) {
+      offline = withoutNetwork;
+      openedFromPayment = false;
+      contextMonth = month;
+      open('list');
+    },
+    detail(record, withoutNetwork) {
+      offline = withoutNetwork;
+      openedFromPayment = true;
+      contextMonth = record.month;
+      selected = schemes.find(scheme => scheme.id === record.schemeId);
+      open('detail');
+    },
+    payments: () => schemes.flatMap(scheme => entries(scheme, monthIndex('2027-12'))),
+    updatePayment(record, values) {
+      const scheme = schemes.find(item => item.id === record.schemeId);
+      if (values.paid) {
+        scheme.paid[record.month] = {...record, ...values, date:values.paid};
+      } else {
+        scheme.manual[record.month] = {...scheme.manual[record.month], ...values};
+      }
+    },
+    setOffline(value) { offline = value; render(); }
+  };
+  render();
+})();
+</script>
+</div>
+</div>
+<div id="rw-calendar-panel">
+<div id="rutina-payments">
+<style>
+#rutina-payments {
+  color-scheme:light dark;
+  --surface:light-dark(#f6f8f3,#171d19); --card:light-dark(#fff,#222a24);
+  --ink:light-dark(#202d24,#ecf4ed); --muted:light-dark(#4a5b50,#b7c6bb);
+  --line:light-dark(#dae3d9,#3d4a40); --accent:light-dark(#154f3b,#b6edce);
+  --soft:light-dark(#dceee2,#2b4838); --on-accent:light-dark(#fff,#13291e);
+  --late:light-dark(#8f3524,#ffbeaa);
+  font:14px/1.4 system-ui,sans-serif;
+}
+#rutina-payments * { box-sizing:border-box; }
+#rutina-payments [hidden] { display:none !important; }
+#rutina-payments .rp-preview { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-bottom:12px; }
+#rutina-payments .rp-preview [aria-pressed=true] { background:var(--soft); color:var(--accent); }
+#rutina-payments .rp-phone { margin:auto; max-width:425px; min-height:560px; border:1px solid var(--line); border-radius:24px; overflow:hidden; background:var(--surface); color:var(--ink); }
+#rutina-payments .rp-bar { min-height:59px; padding:8px 14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--line); }
+#rutina-payments h3 { margin:0; font-size:21px; }
+#rutina-payments h4 { margin:0 0 6px; font-size:16px; }
+#rutina-payments .rp-name { font-size:23px; overflow-wrap:anywhere; }
+#rutina-payments .rp-body { padding:14px 14px 17px; }
+#rutina-payments .rp-phone button, #rutina-payments input, #rutina-payments select { min-width:0; min-height:43px; padding:6px 8px; border:1px solid var(--line); border-radius:9px; font:inherit; color:inherit; background:var(--card); }
+#rutina-payments .rp-phone button { cursor:pointer; }
+#rutina-payments .rp-phone button:disabled { background:var(--soft); color:var(--muted); cursor:default; }
+#rutina-payments .rp-phone :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+#rutina-payments .rp-phone .rp-primary { background:var(--accent); color:var(--on-accent); border-color:transparent; font-weight:690; }
+#rutina-payments .rp-phone .rp-back { background:transparent; border-color:transparent; }
+#rutina-payments .rp-muted { color:var(--muted); font-size:12px; }
+#rutina-payments .rp-late { color:var(--late); }
+#rutina-payments .rp-note { margin:0 0 10px; padding:8px 9px; border:1px solid var(--line); border-radius:9px; background:var(--card); }
+#rutina-payments .rp-field { display:grid; gap:3px; min-width:0; font-weight:625; }
+#rutina-payments .rp-field input, #rutina-payments .rp-field select { width:100%; }
+#rutina-payments .rp-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+#rutina-payments .rp-calendar { margin-top:9px; }
+#rutina-payments .rp-week, #rutina-payments .rp-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:2px; }
+#rutina-payments .rp-week { text-align:center; color:var(--muted); font-size:11px; }
+#rutina-payments .rp-days button { display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:36px; border-color:transparent; background:transparent; padding:1px; }
+#rutina-payments .rp-days [aria-current=date] { border-color:var(--accent); }
+#rutina-payments .rp-days [aria-pressed=true] { background:var(--accent); color:var(--on-accent); font-weight:700; }
+#rutina-payments .rp-dot { width:4px; height:4px; border-radius:50%; background:currentColor; }
+#rutina-payments .rp-section { margin-top:14px; }
+#rutina-payments .rp-heading { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:5px; margin-bottom:5px; }
+#rutina-payments .rp-heading h4 { margin:0; }
+#rutina-payments .rp-list, #rutina-payments .rp-actions, #rutina-payments .rp-form { display:grid; gap:7px; }
+#rutina-payments .rp-row { width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:6px; text-align:left; }
+#rutina-payments .rp-row strong { display:block; overflow-wrap:anywhere; }
+#rutina-payments .rp-row small { display:block; font-size:11px; color:var(--muted); }
+#rutina-payments .rp-row .rp-late { color:var(--late); }
+#rutina-payments .rp-total { margin:9px 0 5px; padding:10px; border-radius:9px; background:var(--soft); color:var(--accent); }
+#rutina-payments .rp-total strong { display:block; font-size:23px; }
+#rutina-payments .rp-facts { padding:3px 9px; margin:0 0 12px; border:1px solid var(--line); border-radius:9px; background:var(--card); }
+#rutina-payments .rp-facts div { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; padding:7px 0; }
+#rutina-payments .rp-facts div + div { border-top:1px solid var(--line); }
+#rutina-payments .rp-facts dt { color:var(--muted); font-size:12px; }
+#rutina-payments .rp-facts dd { margin:0; text-align:right; overflow-wrap:anywhere; }
+#rutina-payments .rp-state { display:inline-block; margin-bottom:8px; background:var(--soft); color:var(--accent); padding:4px 7px; border-radius:7px; font-weight:650; }
+#rutina-payments .rp-state.rp-late { color:var(--late); }
+#rutina-payments .rp-form p { margin:0; }
+</style>
+<div class="rp-preview" role="group" aria-label="Просмотр разделов макета">
+  <button type="button" class="vis-btn" data-view="calendar" aria-pressed="true">Календарь</button>
+  <button type="button" class="vis-btn" data-view="summary" aria-pressed="false">Сводка платежей</button>
+</div>
+<div class="rp-phone" lang="ru">
+  <header class="rp-bar">
+    <button type="button" class="rp-back" id="rp-back" aria-label="Назад" hidden>←</button>
+    <h3 id="rp-title" tabindex="-1">Календарь</h3>
+  </header>
+  <div class="rp-body">
+    <p id="rp-offline-note" class="rp-note rp-muted" hidden>Без сети. Доступен просмотр загруженных платежей.</p>
+    <section data-screen="calendar">
+      <label class="rp-field">Месяц<select id="rp-month">
+        <option value="2026-11">Ноябрь 2026</option><option value="2026-12">Декабрь 2026</option>
+        <option value="2027-01">Январь 2027</option><option value="2027-02">Февраль 2027</option>
+        <option value="2027-03">Март 2027</option>
+      </select></label>
+      <div class="rp-calendar">
+        <div class="rp-week" aria-hidden="true"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+        <div id="rp-days" class="rp-days" role="group" aria-label="Дни месяца"></div>
+      </div>
+      <section class="rp-section" aria-labelledby="rp-list-title">
+        <div class="rp-heading"><h4 id="rp-list-title">Платежи за месяц</h4><button type="button" id="rp-whole-month" hidden>Весь месяц</button></div>
+        <div class="rp-list" id="rp-calendar-list"></div>
+        <p id="rp-calendar-empty" class="rp-muted" hidden>За выбранный период платежей нет.</p>
+      </section>
+      <div class="rp-section rp-actions"><button type="button" id="rp-open-summary">Открыть сводку платежей</button>
+        <button type="button" id="rp-schedules">Расписания платежей</button>
+      </div>
+    </section>
+    <section data-screen="summary" hidden>
+      <div class="rp-grid">
+        <label class="rp-field">Период<select id="rp-period"><option value="month">Месяц</option><option value="year">Год</option></select></label>
+        <label class="rp-field" id="rp-summary-month-row">Месяц<select id="rp-summary-month">
+          <option value="2026-11">Ноябрь 2026</option><option value="2026-12">Декабрь 2026</option>
+          <option value="2027-01">Январь 2027</option><option value="2027-02">Февраль 2027</option>
+          <option value="2027-03">Март 2027</option>
+        </select></label>
+        <label class="rp-field" id="rp-year-row" hidden>Год<select id="rp-year"><option value="2026">2026</option><option value="2027">2027</option></select></label>
+      </div>
+      <div class="rp-total">
+        <span id="rp-total-label">Предстоящие платежи</span><strong id="rp-total"></strong>
+      </div>
+      <p class="rp-muted" id="rp-missing-amount" hidden>В сводку включены платежи с указанной суммой. У части платежей сумма пока неизвестна.</p>
+      <div class="rp-list" id="rp-upcoming"></div>
+      <p class="rp-muted" id="rp-upcoming-empty" hidden>Предстоящих платежей за период нет.</p>
+      <section class="rp-section" id="rp-overdue-section" hidden>
+        <h4>Просроченные · <span id="rp-overdue-total"></span></h4>
+        <div class="rp-list" id="rp-overdue"></div>
+      </section>
+    </section>
+    <section data-screen="detail" hidden>
+      <h4 class="rp-name" id="rp-detail-name"></h4>
+      <span class="rp-state" id="rp-status"></span>
+      <dl class="rp-facts">
+        <div><dt>Срок платежа</dt><dd id="rp-due"></dd></div>
+        <div><dt id="rp-amount-label">Ориентир</dt><dd id="rp-amount-value"></dd></div>
+        <div id="rp-paid-row" hidden><dt>Оплачено</dt><dd id="rp-paid-date"></dd></div>
+        <div><dt>Повторение</dt><dd id="rp-repeat"></dd></div>
+        <div><dt>Категория</dt><dd id="rp-category-value"></dd></div>
+        <div><dt>Получатель</dt><dd id="rp-person-value"></dd></div>
+      </dl>
+      <p class="rp-note rp-muted" id="rp-expense-note" hidden></p>
+      <div class="rp-actions">
+        <button type="button" class="rp-primary" id="rp-pay">Подтвердить оплату</button>
+        <button type="button" id="rp-edit">Изменить только этот платёж</button>
+        <button type="button" id="rp-open-schedule">Открыть расписание</button>
+      </div>
+    </section>
+    <section data-screen="form" hidden>
+      <form class="rp-form" id="rp-form" novalidate>
+        <p class="rp-note rp-muted" id="rp-form-context"></p>
+        <label class="rp-field"><span id="rp-form-amount-label">Фактическая сумма, ₽</span><input id="rp-form-amount" inputmode="decimal"></label>
+        <label class="rp-field"><span id="rp-date-label">Дата оплаты</span><input type="date" id="rp-form-date" required></label>
+        <label class="rp-field" id="rp-category-row">Категория<select id="rp-category">
+          <option>Дом → Связь</option><option>Дом → ЖКУ</option><option>Страхование</option>
+        </select></label>
+        <label class="rp-field" id="rp-person-row">Получатель<select id="rp-person"><option>Семья</option><option>Марина</option><option>Алексей</option></select></label>
+        <p id="rp-error" class="rp-late" role="alert" hidden></p>
+        <button type="submit" class="rp-primary" id="rp-save">Сохранить</button>
+      </form>
+    </section>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('rutina-payments');
+  const workflow = document.getElementById('rutina-payment-workflow');
+  const get = id => root.querySelector('#rp-' + id);
+  const all = selector => root.querySelectorAll(selector);
+  const today = '2026-11-19';
+  let screen = 'calendar';
+  let previous = 'calendar';
+  let active;
+  let selectedDay;
+  let editMode;
+  let offline = false;
+  const currency = new Intl.NumberFormat('ru', {style:'currency', currency:'RUB', minimumFractionDigits:0, maximumFractionDigits:2});
+  const dates = new Intl.DateTimeFormat('ru', {day:'numeric', month:'long', year:'numeric', timeZone:'UTC'});
+  const money = cents => currency.format(cents / 100);
+  const dateLabel = value => dates.format(new Date(value + 'T00:00:00Z'));
+  const monthOf = value => value.slice(0,7);
+  const daysIn = month => {
+    const [year, number] = month.split('-').map(Number);
+    return new Date(Date.UTC(year, number, 0)).getUTCDate();
+  };
+  const isoDay = (month, day) => month + '-' + String(day).padStart(2, '0');
+
+  const payments = () => workflow.schedules.payments();
+  const displayDate = record => record.paid || record.due;
+  const isLate = record => !record.paid && record.due < today;
+  const status = record => record.paid ? 'Оплачен' : isLate(record) ? 'Просрочен' : 'Ожидает оплаты';
+  const current = () => payments().find(record => record.key === active);
+  const ordered = (a,b) => displayDate(a).localeCompare(displayDate(b));
+
+  function row(record, origin) {
+    const button = document.createElement('button');
+    const copy = document.createElement('span');
+    const name = document.createElement('strong');
+    const subtitle = document.createElement('small');
+    const total = document.createElement('strong');
+    button.type = 'button';
+    button.className = 'rp-row';
+    name.textContent = record.name;
+    subtitle.textContent = dateLabel(displayDate(record)) + ' · ' + status(record);
+    if (isLate(record)) subtitle.className = 'rp-late';
+    total.textContent = record.cents === null ? 'Без суммы' : money(record.cents);
+    copy.append(name, subtitle);
+    button.append(copy, total);
+    button.addEventListener('click', () => { active = record.key; previous = origin; open('detail'); });
+    return button;
+  }
+
+  function renderCalendar() {
+    const month = get('month').value;
+    const list = payments().filter(record => monthOf(displayDate(record)) === month).sort(ordered);
+    const tiles = Array.from({length:(new Date(month + '-01T00:00:00Z').getUTCDay() + 6) % 7}, () => document.createElement('span'));
+    for (let day = 1; day <= daysIn(month); day++) {
+      const value = isoDay(month, day);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = String(day);
+      button.setAttribute('aria-label', dateLabel(value));
+      button.setAttribute('aria-pressed', String(selectedDay === value));
+      if (value === today) button.setAttribute('aria-current', 'date');
+      if (list.some(record => displayDate(record) === value)) {
+        const dot = document.createElement('span');
+        dot.className = 'rp-dot';
+        dot.setAttribute('aria-hidden', 'true');
+        button.append(dot);
+      }
+      button.addEventListener('click', () => {
+        selectedDay = value;
+        renderCalendar();
+        get('days').querySelector('[aria-pressed="true"]').focus();
+      });
+      tiles.push(button);
+    }
+    get('days').replaceChildren(...tiles);
+    const visible = selectedDay ? list.filter(record => displayDate(record) === selectedDay) : list;
+    get('whole-month').hidden = !selectedDay;
+    get('list-title').textContent = selectedDay ? 'Платежи за ' + dateLabel(selectedDay) : 'Платежи за месяц';
+    get('calendar-list').replaceChildren(...visible.map(record => row(record,'calendar')));
+    get('calendar-empty').hidden = visible.length > 0;
+  }
+
+  function renderSummary() {
+    const yearly = get('period').value === 'year';
+    get('year-row').hidden = !yearly;
+    get('summary-month-row').hidden = yearly;
+    const month = get('summary-month').value;
+    const year = get('year').value;
+    const unpaid = payments().filter(record => !record.paid && (yearly ? record.due.slice(0,4) === year : monthOf(record.due) === month)).sort(ordered);
+    const upcoming = unpaid.filter(record => !isLate(record));
+    const overdue = unpaid.filter(isLate);
+    const missing = upcoming.some(record => record.cents === null);
+    const sum = records => records.reduce((total, record) => total + (record.cents ?? 0), 0);
+    get('total').textContent = upcoming.length && upcoming.every(record => record.cents === null) ? 'Сумма пока неизвестна' : money(sum(upcoming));
+    get('total-label').textContent = missing ? 'Предстоящие платежи с указанной суммой' : 'Предстоящие платежи';
+    get('missing-amount').hidden = !missing;
+    get('upcoming').replaceChildren(...upcoming.map(record => row(record,'summary')));
+    get('upcoming-empty').hidden = upcoming.length > 0;
+    get('overdue-section').hidden = overdue.length === 0;
+    get('overdue-total').textContent = overdue.some(record => record.cents === null) ? 'сумма частично указана' : money(sum(overdue));
+    get('overdue').replaceChildren(...overdue.map(record => row(record,'summary')));
+  }
+
+  function renderDetail() {
+    const record = current();
+    get('detail-name').textContent = record.name;
+    get('status').textContent = status(record);
+    get('status').classList.toggle('rp-late', isLate(record));
+    get('due').textContent = dateLabel(record.due);
+    get('amount-label').textContent = record.paid ? 'Фактическая сумма' : 'Цена';
+    get('amount-value').textContent = record.cents === null ? 'Не указана' : money(record.cents);
+    get('paid-row').hidden = !record.paid;
+    get('paid-date').textContent = record.paid ? dateLabel(record.paid) : '';
+    get('repeat').textContent = record.cadence === 'yearly' ? 'Ежегодно' : 'Ежемесячно';
+    get('category-value').textContent = record.category;
+    get('person-value').textContent = record.person;
+    get('expense-note').hidden = !record.paid;
+    get('expense-note').textContent = record.paid ? 'Учтено в расходах по дате оплаты — ' + dateLabel(record.paid) + '.' : '';
+    get('pay').hidden = Boolean(record.paid);
+    get('edit').hidden = false;
+  }
+
+  function render() {
+    const titles = {calendar:'Календарь', summary:'Предстоящие платежи', detail:'Обязательный платёж', form:editMode === 'pay' ? 'Подтвердить оплату' : 'Изменить один платёж'};
+    get('title').textContent = titles[screen];
+    get('back').hidden = screen === 'calendar';
+    get('offline-note').hidden = !offline;
+    all('[data-screen]').forEach(section => { section.hidden = section.dataset.screen !== screen; });
+    all('[data-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === screen)));
+    for (const id of ['pay','edit','save']) get(id).disabled = offline;
+    if (screen === 'calendar') renderCalendar();
+    if (screen === 'summary') renderSummary();
+    if (screen === 'detail') renderDetail();
+  }
+  function open(next) { screen = next; render(); get('title').focus(); }
+
+  function openForm(mode) {
+    if (offline) return;
+    const record = current();
+    editMode = mode;
+    const paidFields = mode === 'pay' || Boolean(record.paid);
+    get('form-context').textContent = record.name + ' · срок ' + dateLabel(record.due) +
+      (mode === 'edit' ? '. Остальные платежи расписания сохранят свои значения.' : '');
+    get('form-amount-label').textContent = paidFields ? 'Фактическая сумма, ₽' : 'Цена, ₽ (необязательно)';
+    get('form-amount').value = record.cents === null ? '' : String(record.cents / 100).replace('.', ',');
+    get('date-label').textContent = paidFields ? 'Дата оплаты' : 'Срок этого платежа';
+    get('form-date').value = mode === 'pay' ? today : (record.paid || record.due);
+    get('form-date').max = paidFields ? today : '';
+    get('category-row').hidden = mode === 'pay';
+    get('person-row').hidden = mode === 'pay';
+    get('category').value = record.category;
+    get('person').value = record.person;
+    get('error').hidden = true;
+    open('form');
+  }
+
+  all('[data-view]').forEach(button => button.addEventListener('click', () => open(button.dataset.view)));
+  get('schedules').addEventListener('click', () => {
+    workflow.showSchedules();
+    workflow.schedules.list(get('month').value, offline);
+  });
+  get('open-schedule').addEventListener('click', () => {
+    const record = current();
+    workflow.showSchedules();
+    workflow.schedules.detail(record, offline);
+  });
+  get('month').addEventListener('change', () => { selectedDay = undefined; renderCalendar(); });
+  get('whole-month').addEventListener('click', () => { selectedDay = undefined; renderCalendar(); });
+  get('open-summary').addEventListener('click', () => {
+    get('period').value = 'month';
+    get('summary-month').value = get('month').value;
+    open('summary');
+  });
+  for (const id of ['period','summary-month','year']) get(id).addEventListener('change', renderSummary);
+  get('back').addEventListener('click', () => open(screen === 'form' ? 'detail' : screen === 'detail' ? previous : 'calendar'));
+  get('edit').addEventListener('click', () => openForm('edit'));
+  get('pay').addEventListener('click', () => openForm('pay'));
+  get('form').addEventListener('submit', event => {
+    event.preventDefault();
+    if (offline || screen !== 'form') return;
+    const record = current();
+    if (editMode === 'pay' && record.paid) return;
+    const paying = editMode === 'pay' || Boolean(record.paid);
+    const input = get('form-amount').value.trim();
+    const date = get('form-date').value;
+    const match = input.match(/^([0-9]+)(?:[,.]([0-9]{1,2}))?$/);
+    const cents = match ? Number(match[1]) * 100 + Number((match[2] || '').padEnd(2, '0')) : null;
+    const issue = (input || paying) && !Number.isSafeInteger(cents) ? 'Укажите сумму в рублях с точностью до копеек.' :
+      !date ? 'Укажите дату.' : paying && date > today ? 'Укажите дату оплаты: сегодня или раньше.' : '';
+    if (issue) {
+      get('error').textContent = issue;
+      get('error').hidden = false;
+      return;
+    }
+    const values = {cents, [paying ? 'paid' : 'due']:date};
+    if (editMode === 'edit') Object.assign(values, {category:get('category').value, person:get('person').value});
+    workflow.schedules.updatePayment(record, values);
+    open('detail');
+  });
+  workflow.calendar = {
+    return() { open(screen === 'detail' && !current() ? previous : screen); },
+    setOffline(value) { offline = value; render(); }
+  };
+  render();
+})();
+</script>
+</div>
+</div>
+<script>
+(() => {
+  const workflow = document.getElementById('rutina-payment-workflow');
+  const calendar = document.getElementById('rw-calendar-panel');
+  const schedules = document.getElementById('rw-schedule-panel');
+  const offline = document.getElementById('rw-offline');
+  let offlineEnabled = false;
+
+  workflow.showSchedules = () => {
+    calendar.hidden = true;
+    schedules.hidden = false;
+  };
+  workflow.returnToCalendar = () => {
+    schedules.hidden = true;
+    calendar.hidden = false;
+    workflow.calendar.return();
+  };
+  offline.addEventListener('click', () => {
+    offlineEnabled = !offlineEnabled;
+    offline.setAttribute('aria-pressed', String(offlineEnabled));
+    workflow.calendar.setOffline(offlineEnabled);
+    workflow.schedules.setOffline(offlineEnabled);
+  });
+  const params = new URLSearchParams(location.search);
+  if (params.get('offline') === '1') offline.click();
+  if (params.get('view') === 'schedules') document.getElementById('rp-schedules').click();
+})();
+</script>
+</div>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Рутина — Список и форма дел</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0 auto; max-width: 920px; padding: 16px; font: 14px/1.45 system-ui, sans-serif; }
+    .vis-btn, .vis-form-select { padding: 6px 12px; border: 1px solid GrayText; border-radius: 8px; }
+    .vis-btn { cursor: pointer; }
+  </style>
+</head>
+<body>
+<div id="rutina-task-flow">
+<style>
+#rutina-task-flow {
+  color-scheme:light dark;
+  --surface:light-dark(#f6f8f3,#171d19); --card:light-dark(#fff,#222a24);
+  --ink:light-dark(#202d24,#ecf4ed); --muted:light-dark(#4a5b50,#b7c6bb);
+  --line:light-dark(#dae3d9,#3d4a40); --accent:light-dark(#154f3b,#b6edce);
+  --soft:light-dark(#dceee2,#2b4838); --on-accent:light-dark(#fff,#13291e);
+  --error:light-dark(#8f3524,#ffbeaa);
+  font:14px/1.45 system-ui,sans-serif;
+}
+#rutina-task-flow * { box-sizing:border-box; }
+#rutina-task-flow [hidden] { display:none !important; }
+#rutina-task-flow .rt-controls { display:flex; justify-content:center; margin-bottom:12px; }
+#rutina-task-flow .rt-controls [aria-pressed=true] { background:var(--soft); color:var(--accent); }
+#rutina-task-flow .rt-phone {
+  margin:auto; max-width:410px; min-height:560px; border:1px solid var(--line); border-radius:24px;
+  background:var(--surface); color:var(--ink); overflow:hidden; display:flex; flex-direction:column;
+}
+#rutina-task-flow .rt-bar { min-height:60px; padding:8px 15px; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--line); }
+#rutina-task-flow .rt-bar h3 { margin:0; font-size:22px; letter-spacing:-.35px; }
+#rutina-task-flow .rt-body { padding:14px 15px 18px; flex:1; min-width:0; }
+#rutina-task-flow .rt-body h4 { margin:0 0 7px; }
+#rutina-task-flow .rt-body .rt-name { font-size:22px; line-height:1.2; overflow-wrap:anywhere; }
+#rutina-task-flow .rt-muted { color:var(--muted); font-size:12px; }
+#rutina-task-flow .rt-note { margin:0 0 12px; padding:8px 10px; border:1px solid var(--line); border-radius:9px; background:var(--card); }
+#rutina-task-flow .rt-phone button, #rutina-task-flow input, #rutina-task-flow select, #rutina-task-flow textarea {
+  font:inherit; color:inherit; min-height:44px; min-width:0; border:1px solid var(--line);
+  border-radius:9px; background:var(--card); padding:7px 10px;
+}
+#rutina-task-flow .rt-phone button { cursor:pointer; }
+#rutina-task-flow .rt-phone :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+#rutina-task-flow .rt-phone .rt-primary { background:var(--accent); color:var(--on-accent); border-color:transparent; font-weight:680; }
+#rutina-task-flow .rt-phone button:disabled { background:var(--soft); color:var(--muted); cursor:default; }
+#rutina-task-flow .rt-phone .rt-back { border-color:transparent; background:transparent; padding:4px 9px; }
+#rutina-task-flow .rt-filter { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin-bottom:14px; }
+#rutina-task-flow .rt-filter [aria-pressed=true] { background:var(--soft); color:var(--accent); border-color:var(--accent); font-weight:680; }
+#rutina-task-flow .rt-group + .rt-group { margin-top:14px; }
+#rutina-task-flow .rt-group h4 { color:var(--muted); font-size:12px; }
+#rutina-task-flow .rt-list { display:grid; gap:6px; }
+#rutina-task-flow .rt-row { width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; text-align:left; }
+#rutina-task-flow .rt-row strong { display:block; overflow-wrap:anywhere; }
+#rutina-task-flow .rt-row small { display:block; color:var(--muted); font-size:12px; }
+#rutina-task-flow .rt-row .rt-late { color:var(--error); }
+#rutina-task-flow .rt-wide { width:100%; margin-top:12px; }
+#rutina-task-flow .rt-pill { display:inline-block; margin-bottom:10px; padding:4px 8px; border-radius:7px; background:var(--soft); color:var(--accent); font-weight:680; font-size:12px; }
+#rutina-task-flow .rt-facts { margin:0; padding:3px 10px; background:var(--card); border:1px solid var(--line); border-radius:10px; }
+#rutina-task-flow .rt-facts div { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:7px; padding:8px 0; }
+#rutina-task-flow .rt-facts div + div { border-top:1px solid var(--line); }
+#rutina-task-flow .rt-facts dt { color:var(--muted); font-size:12px; }
+#rutina-task-flow .rt-facts dd { margin:0; text-align:right; overflow-wrap:anywhere; }
+#rutina-task-flow .rt-facts .rt-comment { grid-template-columns:1fr; gap:3px; }
+#rutina-task-flow .rt-comment dd { text-align:left; white-space:pre-wrap; }
+#rutina-task-flow .rt-form { display:grid; gap:10px; }
+#rutina-task-flow .rt-form label { display:grid; gap:3px; font-weight:630; min-width:0; }
+#rutina-task-flow .rt-form input, #rutina-task-flow .rt-form select { width:100%; }
+#rutina-task-flow .rt-form textarea { resize:vertical; }
+#rutina-task-flow .rt-form p { margin:0; }
+#rutina-task-flow .rt-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+#rutina-task-flow .rt-error { color:var(--error); }
+</style>
+<div class="rt-controls"><button type="button" class="vis-btn" id="tf-offline" aria-pressed="false">Без сети</button></div>
+<div class="rt-phone" lang="ru">
+  <header class="rt-bar">
+    <button type="button" id="tf-back" class="rt-back" aria-label="Назад" hidden>←</button>
+    <h3 id="tf-title" tabindex="-1">Дела</h3>
+  </header>
+  <div class="rt-body">
+    <p class="rt-muted rt-note" id="tf-offline-note" hidden>Без сети. Можно просматривать сохранённые дела.</p>
+    <section data-screen="list">
+      <div class="rt-filter" role="group" aria-label="Показать дела">
+        <button type="button" data-filter="pending" aria-pressed="true">К выполнению</button>
+        <button type="button" data-filter="done" aria-pressed="false">Выполненные</button>
+      </div>
+      <section class="rt-group" id="tf-dated" aria-labelledby="tf-dated-title">
+        <h4 id="tf-dated-title">С датой</h4><div class="rt-list" id="tf-dated-list"></div>
+      </section>
+      <section class="rt-group" id="tf-undated" aria-labelledby="tf-undated-title">
+        <h4 id="tf-undated-title">Без даты</h4><div class="rt-list" id="tf-undated-list"></div>
+      </section>
+      <div class="rt-list" id="tf-done-list" hidden></div>
+      <p class="rt-muted" id="tf-empty" hidden>В этом списке пока нет дел.</p>
+      <button type="button" class="rt-primary rt-wide" id="tf-add">Добавить дело</button>
+    </section>
+    <section data-screen="detail" hidden>
+      <h4 class="rt-name" id="tf-detail-name"></h4>
+      <span class="rt-pill" id="tf-detail-status"></span>
+      <dl class="rt-facts">
+        <div><dt>Запланировано</dt><dd id="tf-detail-date"></dd></div>
+        <div><dt>Для кого</dt><dd id="tf-detail-person"></dd></div>
+        <div id="tf-repeat-row"><dt>Повтор</dt><dd id="tf-detail-repeat"></dd></div>
+        <div id="tf-done-row"><dt>Дата выполнения</dt><dd id="tf-detail-done"></dd></div>
+        <div class="rt-comment" id="tf-comment-row"><dt>Комментарий</dt><dd id="tf-detail-comment"></dd></div>
+      </dl>
+      <button type="button" class="rt-primary rt-wide" id="tf-edit">Редактировать</button>
+    </section>
+    <section data-screen="form" hidden>
+      <form class="rt-form" id="tf-form" novalidate>
+        <label>Название<input id="tf-name" type="text" required></label>
+        <div class="rt-grid">
+          <label><span id="tf-date-label">Запланированная дата</span><span class="rt-muted" id="tf-date-requirement">(необязательно)</span>
+            <input type="date" id="tf-date" aria-describedby="tf-date-error">
+            <span class="rt-error" id="tf-date-error" role="alert" hidden></span>
+          </label>
+          <label id="tf-time-row" hidden>Время <span class="rt-muted">(необязательно)</span><input type="time" id="tf-time" disabled></label>
+        </div>
+        <label>Для кого<select id="tf-person"><option>Семья</option><option>Марина</option><option>Алексей</option></select></label>
+        <label>Повтор<select id="tf-repeat">
+          <option value="">Без повторения</option>
+          <option value="1">Раз в месяц</option>
+          <option value="2">Каждые 2 месяца</option>
+          <option value="3">Каждые 3 месяца</option>
+          <option value="6">Каждые 6 месяцев</option>
+          <option value="12">Раз в год</option>
+        </select></label>
+        <p id="tf-repeat-note" class="rt-muted" hidden>Следующая дата считается от фактической даты выполнения. Если нужного числа нет, берётся последний день месяца.</p>
+        <label>Комментарий <span class="rt-muted">(необязательно)</span><textarea id="tf-comment" rows="3"></textarea></label>
+        <p id="tf-error" class="rt-error" role="alert" hidden></p>
+        <button type="submit" class="rt-primary" id="tf-save">Сохранить</button>
+      </form>
+    </section>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('rutina-task-flow');
+  const get = id => root.querySelector('#tf-' + id);
+  const all = selector => root.querySelectorAll(selector);
+  const today = '2026-11-19';
+  const tasks = [
+    {id:1,name:'Забрать посылку',date:'2026-11-17',time:'',person:'Семья',repeat:'',comment:'Проверить часы работы пункта выдачи.',done:''},
+    {id:2,name:'Заменить фильтр',date:'2026-11-20',time:'18:30',person:'Семья',repeat:'2',comment:'Перед заменой перекрыть подачу воды.',done:''},
+    {id:3,name:'Разобрать шкаф',date:'',time:'',person:'Марина',repeat:'',comment:'',done:''},
+    {id:4,name:'Передать показания счётчиков',date:'2026-11-18',time:'',person:'Алексей',repeat:'',comment:'',done:'2026-11-18'}
+  ];
+  let screen = 'list';
+  let filter = 'pending';
+  let detailId;
+  let editId;
+  let nextId = 5;
+  let offline = false;
+
+  const formatter = new Intl.DateTimeFormat('ru', {day:'numeric', month:'long', timeZone:'UTC'});
+  const dateLabel = date => formatter.format(new Date(date + 'T00:00:00Z'));
+  const repeatLabels = Object.fromEntries(Array.from(get('repeat').options, option => [option.value, option.textContent]));
+  const detail = () => tasks.find(task => task.id === detailId);
+
+  function row(task) {
+    const button = document.createElement('button');
+    const copy = document.createElement('span');
+    const name = document.createElement('strong');
+    const meta = document.createElement('small');
+    const arrow = document.createElement('span');
+    const late = !task.done && task.date && task.date < today;
+    const when = task.done ? 'Выполнено ' + dateLabel(task.done) :
+      task.date ? (late ? 'Было запланировано на ' : '') + dateLabel(task.date) + (task.time ? ', ' + task.time : '') : '';
+    button.type = 'button';
+    button.className = 'rt-row';
+    name.textContent = task.name;
+    meta.textContent = [when, task.person, task.repeat ? repeatLabels[task.repeat] : ''].filter(Boolean).join(' · ');
+    if (late) meta.className = 'rt-late';
+    arrow.setAttribute('aria-hidden', 'true');
+    arrow.textContent = '›';
+    copy.append(name, meta);
+    button.append(copy, arrow);
+    button.addEventListener('click', () => {
+      detailId = task.id;
+      open('detail');
+    });
+    return button;
+  }
+
+  function renderList() {
+    const pending = filter === 'pending';
+    const active = tasks.filter(task => !task.done);
+    const dated = active.filter(task => task.date).sort((a,b) => (a.date + a.time).localeCompare(b.date + b.time));
+    const undated = active.filter(task => !task.date);
+    const done = tasks.filter(task => task.done).sort((a,b) => b.done.localeCompare(a.done));
+    all('[data-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filter === filter)));
+    get('dated').hidden = !pending || !dated.length;
+    get('undated').hidden = !pending || !undated.length;
+    get('done-list').hidden = pending || !done.length;
+    get('empty').hidden = Boolean(pending ? active.length : done.length);
+    get('dated-list').replaceChildren(...dated.map(row));
+    get('undated-list').replaceChildren(...undated.map(row));
+    get('done-list').replaceChildren(...done.map(row));
+  }
+
+  function renderDetail() {
+    const task = detail();
+    get('detail-name').textContent = task.name;
+    get('detail-status').textContent = task.done ? 'Выполнено' : 'Не выполнено';
+    get('detail-date').textContent = task.date ? dateLabel(task.date) + (task.time ? ', ' + task.time : '') : 'Без даты';
+    get('detail-person').textContent = task.person;
+    get('repeat-row').hidden = !task.repeat;
+    get('detail-repeat').textContent = task.repeat ? repeatLabels[task.repeat] : '';
+    get('done-row').hidden = !task.done;
+    get('detail-done').textContent = task.done ? dateLabel(task.done) : '';
+    get('comment-row').hidden = !task.comment;
+    get('detail-comment').textContent = task.comment;
+  }
+
+  function render() {
+    const titles = {list:'Дела', detail:'Дело', form:editId ? 'Редактировать дело' : 'Новое дело'};
+    get('title').textContent = titles[screen];
+    get('back').hidden = screen === 'list';
+    all('[data-screen]').forEach(section => { section.hidden = section.dataset.screen !== screen; });
+    get('offline').setAttribute('aria-pressed', String(offline));
+    get('offline-note').hidden = !offline;
+    for (const button of ['add','edit','save']) get(button).disabled = offline;
+    if (screen === 'list') renderList();
+    if (screen === 'detail') renderDetail();
+  }
+
+  function open(next) {
+    screen = next;
+    render();
+    get('title').focus();
+  }
+
+  function showError(text) {
+    get('error').hidden = !text;
+    get('error').textContent = text;
+  }
+
+  function showDateError(text) {
+    get('date-error').hidden = !text;
+    get('date-error').textContent = text;
+    get('date').setAttribute('aria-invalid', String(Boolean(text)));
+  }
+
+  function updateForm() {
+    const date = get('date');
+    const withDate = Boolean(date.value);
+    const repeating = Boolean(get('repeat').value);
+    date.required = repeating;
+    get('date-label').textContent = repeating && !editId ? 'Дата первого события' : 'Запланированная дата';
+    get('date-requirement').textContent = repeating ? '(обязательно)' : '(необязательно)';
+    get('time-row').hidden = !withDate;
+    get('time').disabled = !withDate;
+    get('repeat-note').hidden = !repeating;
+    if (withDate || !repeating) showDateError('');
+  }
+
+  function openForm(task) {
+    if (offline) return;
+    editId = task?.id;
+    get('name').value = task?.name || '';
+    get('date').value = task?.date || '';
+    get('time').value = task?.time || '';
+    get('person').value = task?.person || 'Семья';
+    get('repeat').value = task?.repeat || '';
+    get('comment').value = task?.comment || '';
+    showError('');
+    showDateError('');
+    updateForm();
+    open('form');
+  }
+
+  all('[data-filter]').forEach(button => button.addEventListener('click', () => { filter = button.dataset.filter; renderList(); }));
+  get('offline').addEventListener('click', () => { offline = !offline; render(); });
+  get('add').addEventListener('click', () => openForm());
+  get('edit').addEventListener('click', () => openForm(detail()));
+  get('back').addEventListener('click', () => open(screen === 'form' && editId ? 'detail' : 'list'));
+  get('date').addEventListener('input', updateForm);
+  get('repeat').addEventListener('change', updateForm);
+  get('name').addEventListener('input', () => showError(''));
+  get('form').addEventListener('submit', event => {
+    event.preventDefault();
+    if (offline) return;
+    const name = get('name').value.trim();
+    if (!name) {
+      showError('Введите название.');
+      get('name').focus();
+      return;
+    }
+    const date = get('date').value;
+    const repeat = get('repeat').value;
+    if (repeat && !date) {
+      showDateError(editId ? 'Укажите дату для повторения.' : 'Укажите дату первого события.');
+      get('date').focus();
+      return;
+    }
+    const fields = {
+      name, date, time:date ? get('time').value : '', person:get('person').value,
+      repeat, comment:get('comment').value.trim()
+    };
+    if (editId) {
+      Object.assign(detail(), fields);
+      open('detail');
+    } else {
+      tasks.unshift({...fields, id:nextId++, done:''});
+      filter = 'pending';
+      open('list');
+    }
+  });
+  render();
+})();
+</script>
+</div>
+</body>
+</html>

@@ -1,0 +1,1345 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Рутина — утверждённые макеты</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0 auto; max-width: 920px; padding: 16px; font: 14px/1.45 system-ui, sans-serif; }
+    .vis-btn, .vis-form-select { padding: 6px 12px; border: 1px solid GrayText; border-radius: 8px; }
+    .vis-btn { cursor: pointer; }
+  </style>
+</head>
+<body>
+<div id="rutina-design-review">
+<style>
+#rutina-design-review [hidden] { display:none !important; }
+#rutina-design-review .rv-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-bottom:14px; }
+#rutina-design-review .rv-controls button { min-height:38px; font:inherit; }
+#rutina-design-review .rv-controls button[aria-pressed=true] { background:var(--accent, #dceee2); color:var(--accent-foreground, #154f3b); }
+</style>
+<div class="rv-controls" role="group" aria-label="Макеты для проверки">
+  <button type="button" class="vis-btn" aria-controls="rv-home" aria-pressed="true" data-review-go="home">Главная</button>
+  <button type="button" class="vis-btn" aria-controls="rv-cards" aria-pressed="false" data-review-go="cards">Карточки</button>
+  <button type="button" class="vis-btn" aria-controls="rv-calendar-account" aria-pressed="false" data-review-go="calendar-account">Календарь и кабинет</button>
+</div>
+<section id="rv-home" data-review-panel="home">
+<div id="rutina-home"><style>
+#rutina-home {
+  --rt-surface: light-dark(#f6f8f3, #171d19);
+  --rt-raised: light-dark(#ffffff, #222a24);
+  --rt-ink: light-dark(#202d24, #ecf4ed);
+  --rt-muted: light-dark(#4a5b50, #b7c6bb);
+  --rt-line: light-dark(#dae3d9, #3d4a40);
+  --rt-accent: light-dark(#154f3b, #b6edce);
+  --rt-selected: light-dark(#dceee2, #2b4838);
+  --rt-danger: light-dark(#91381e, #ffbeaa);
+  --rt-late-bg: light-dark(#fff1e9, #482e26);
+  color-scheme: light dark;
+  container-type: inline-size;
+}
+#rutina-home * { box-sizing: border-box; }
+#rutina-home .rt-choice { display: grid; gap: 6px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 14px; }
+#rutina-home .rt-choice button { min-height: 42px; font-size: 12px; padding: 5px; }
+#rutina-home .rt-choice [aria-pressed="true"] { background: var(--rt-selected); color: var(--rt-accent); }
+#rutina-home .rt-board { display: grid; grid-template-columns: minmax(0, 1fr); }
+#rutina-home .rt-option { display: none; min-width: 0; }
+#rutina-home .rt-option.rt-visible { display: block; }
+#rutina-home .rt-option > header { padding-bottom: 12px; max-width: 380px; margin: auto; }
+#rutina-home .rt-option h3 { margin: 0 0 4px; }
+#rutina-home .rt-option header p { margin: 0; }
+#rutina-home .rt-phone { overflow: hidden; display: flex; flex-direction: column; min-height: 525px; max-width: 380px; margin: auto; background: var(--rt-surface); color: var(--rt-ink); border: 1px solid var(--rt-line); border-radius: 24px; font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.35; }
+#rutina-home .rt-top { min-height: 80px; padding: 16px 15px 12px; display: flex; justify-content: space-between; gap: 6px; align-items: center; }
+#rutina-home .rt-top strong { display: block; font-weight: 720; font-size: 24px; letter-spacing: -.55px; }
+#rutina-home .rt-top small { display: block; color: var(--rt-muted); font-size: 11px; }
+#rutina-home .rt-refresh { color: var(--rt-accent); font-size: 11px; font-weight: 700; }
+#rutina-home .rt-main { padding: 0 14px 12px; flex: 1; }
+#rutina-home .rt-main h4 { margin: 0; }
+#rutina-home .rt-main .rt-heading { font-size: 16px; font-weight: 700; margin: 0 0 9px; }
+#rutina-home .rt-group { margin: 0 0 6px; }
+#rutina-home .rt-group h4 { font-size: 11px; font-weight: 690; color: var(--rt-muted); padding: 4px 2px; }
+#rutina-home .rt-group ul { margin: 0; padding: 0; list-style: none; }
+#rutina-home .rt-row { display: flex; gap: 8px; align-items: center; min-height: 45px; padding: 5px 7px; background: var(--rt-raised); margin: 0; border: 1px solid var(--rt-line); border-bottom-width: 0; }
+#rutina-home .rt-row:first-child { border-radius: 10px 10px 0 0; }
+#rutina-home .rt-row:last-child { border-radius: 0 0 10px 10px; border-bottom-width: 1px; }
+#rutina-home .rt-row:only-child { border-radius: 10px; }
+#rutina-home .rt-late { background: var(--rt-late-bg); }
+#rutina-home .rt-mark { flex: 0 0 24px; height: 24px; display: grid; place-items: center; border-radius: 8px; background: var(--rt-selected); color: var(--rt-accent); }
+#rutina-home .rt-late .rt-mark { background: transparent; color: var(--rt-danger); }
+#rutina-home .rt-late .rt-copy small, #rutina-home .rt-overdue h4 { color: var(--rt-danger); }
+#rutina-home .rt-mark svg, #rutina-home .rt-actions svg { width: 14px; height: 14px; }
+#rutina-home .rt-copy { flex: 1; min-width: 0; }
+#rutina-home .rt-copy strong { display: block; font-weight: 680; overflow-wrap: anywhere; }
+#rutina-home .rt-copy small { display: block; font-size: 11px; color: var(--rt-muted); }
+#rutina-home .rt-amount { white-space: nowrap; font-size: 12px; }
+#rutina-home .rt-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 5px; margin: 9px 0; }
+#rutina-home .rt-actions > :is(span,button) { display: flex; justify-content: center; align-items: center; gap: 4px; min-height: 39px; padding: 4px; border-radius: 9px; background: var(--rt-selected); color: var(--rt-accent); text-align: center; font-weight: 700; font-size: 11px; }
+#rutina-home .rt-actions > button { background: var(--rt-raised); border: 1px solid var(--rt-line); min-height: 44px; }
+#rutina-home .rt-first .rt-actions { margin: 0 0 11px; }
+#rutina-home .rt-sections .rt-group { margin-bottom: 10px; }
+#rutina-home .rt-nav { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 1px; padding: 7px 4px 10px; background: var(--rt-raised); border-top: 1px solid var(--rt-line); }
+#rutina-home .rt-nav span { min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 40px; padding: 2px 0; color: var(--rt-muted); font-size: 11px; }
+#rutina-home .rt-nav svg { width: 17px; height: 17px; }
+#rutina-home .rt-nav [aria-current="page"] { color: var(--rt-accent); font-weight: 720; background: var(--rt-selected); border-radius: 9px; }
+
+#rutina-home .rt-record-link { width:100%; min-height:38px; display:flex; justify-content:space-between; align-items:center; gap:8px; text-align:left; padding:0 2px; }
+#rutina-home button { background:transparent; border:0; color:inherit; font:inherit; cursor:pointer; }
+#rutina-home .rt-nav button { display:grid; place-items:center; min-height:40px; padding:2px 0; color:var(--rt-muted); font-size:11px; }
+</style><div class="rt-phone">
+<div class="rt-top"><div><strong>Главная</strong><small>Обновлено сегодня в 12:30</small></div><span class="rt-refresh">Обновить</span></div>
+<div class="rt-main">
+<h4 class="rt-heading">Что предстоит</h4>
+<section class="rt-group rt-overdue"><h4>Прошедшие даты</h4><ul><li class="rt-row rt-late"><span class="rt-mark"><i data-lucide="clock" aria-hidden="true"></i></span><span class="rt-copy"><strong>Забрать посылку</strong><small>Дело · было запланировано на 17 ноября</small></span></li></ul></section>
+<section class="rt-group"><h4>Сегодня</h4><ul><li class="rt-row"><button class="rt-record-link" type="button" data-review-go="cards" data-record="purchase"><span class="rt-copy"><strong>Фильтр для воды</strong><small>Покупка · не позднее 19 ноября</small></span><span aria-hidden="true">›</span></button></li></ul></section>
+<section class="rt-group"><h4>Ближайшие дни</h4><ul><li class="rt-row"><button class="rt-record-link" type="button" data-review-go="cards" data-record="task"><span class="rt-copy"><strong>Заменить фильтр</strong><small>Дело · 20 ноября, 18:30</small></span><span aria-hidden="true">›</span></button></li>
+<li class="rt-row"><span class="rt-mark"><i data-lucide="calendar" aria-hidden="true"></i></span><span class="rt-copy"><strong>Интернет</strong><small>Платёж · до 20 ноя</small></span><strong class="rt-amount">850 ₽</strong></li></ul></section>
+<div class="rt-actions" aria-label="Быстрые действия"><span class=""><i data-lucide="plus" aria-hidden="true"></i>Добавить дело</span>
+<span class=""><i data-lucide="plus" aria-hidden="true"></i>Добавить покупку</span>
+<button type="button" data-review-go="finance" data-finance-entry="rf-overview" aria-controls="rv-finance">Финансы</button>
+<button type="button" data-review-go="finance" data-finance-entry="rf-from-home" aria-controls="rv-finance">Посмотреть отчёт</button></div>
+</div>
+<nav class="rt-nav" aria-label="Разделы приложения"><span aria-current="page"><i data-lucide="home" aria-hidden="true"></i>Главная</span>
+<span><i data-lucide="folder" aria-hidden="true"></i>Покупки</span>
+<span><i data-lucide="check" aria-hidden="true"></i>Дела</span>
+<button type="button" data-review-go="calendar-account" data-app-screen="calendar"><i data-lucide="calendar" aria-hidden="true"></i>Календарь</button>
+<button type="button" data-review-go="calendar-account" data-app-screen="account"><i data-lucide="user" aria-hidden="true"></i>Кабинет</button></nav>
+</div>
+
+</div>
+</section>
+<section id="rv-cards" data-review-panel="cards" hidden>
+<div id="rutina-records" aria-label="Переходы между главной, делом и покупкой">
+<style>
+#rutina-records {
+  --surface: light-dark(#f6f8f3,#171d19);
+  --card: light-dark(#fff,#222a24);
+  --text: light-dark(#202d24,#ecf4ed);
+  --muted: light-dark(#4a5b50,#b7c6bb);
+  --line: light-dark(#dae3d9,#3d4a40);
+  --accent: light-dark(#154f3b,#b6edce);
+  --on-accent: light-dark(#fff,#13291e);
+  --soft: light-dark(#dceee2,#2b4838);
+  color-scheme: light dark;
+}
+#rutina-records * { box-sizing: border-box; }
+#rutina-records [hidden] { display: none !important; }
+#rutina-records .rt-controls {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+  gap: 6px; max-width: 580px; margin: 0 auto 12px;
+}
+#rutina-records .rt-controls button { min-height: 36px; }
+#rutina-records .rt-controls [aria-pressed="true"] { background: var(--soft); color: var(--accent); }
+#rutina-records .rt-phone {
+  max-width: 400px; min-height: 510px; margin: auto; overflow: hidden;
+  border: 1px solid var(--line); border-radius: 24px;
+  background: var(--surface); color: var(--text); font: 14px/1.45 system-ui,sans-serif;
+}
+#rutina-records .rt-bar {
+  display: flex; align-items: center; gap: 10px; min-height: 58px;
+  padding: 8px 14px; border-bottom: 1px solid var(--line);
+}
+#rutina-records .rt-bar strong { font-size: 15px; }
+#rutina-records .rt-phone button {
+  font: inherit; color: inherit; cursor: pointer;
+  border: 1px solid var(--line); border-radius: 9px; background: var(--card);
+  min-height: 44px; padding: 8px 12px;
+}
+#rutina-records .rt-phone button:focus-visible, #rutina-records input:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+#rutina-records .rt-phone .rt-back { background: transparent; border-color: transparent; padding: 5px 10px; }
+#rutina-records .rt-body { padding: 16px; }
+#rutina-records .rt-body h3 { margin: 0 0 9px; font-size: 24px; line-height: 1.18; overflow-wrap: anywhere; }
+#rutina-records .rt-body h4 { margin: 0 0 8px; font-size: 14px; }
+#rutina-records .rt-muted { color: var(--muted); font-size: 12px; }
+#rutina-records .rt-stamp { margin: 0 0 14px; }
+#rutina-records .rt-status {
+  display: inline-block; padding: 4px 8px; background: var(--soft); color: var(--accent);
+  font-size: 12px; font-weight: 670; border-radius: 7px; margin-bottom: 10px;
+}
+#rutina-records .rt-offline {
+  padding: 9px 11px; margin: 0 0 14px; border-radius: 9px;
+  background: var(--card); color: var(--muted); border: 1px solid var(--line);
+}
+#rutina-records .rt-facts {
+  margin: 0 0 16px; padding: 4px 12px; background: var(--card);
+  border: 1px solid var(--line); border-radius: 12px;
+}
+#rutina-records .rt-facts div {
+  display: grid; grid-template-columns: minmax(0,.95fr) minmax(0,1.05fr);
+  gap: 10px; align-items: baseline; padding: 8px 0;
+}
+#rutina-records .rt-facts div + div { border-top: 1px solid var(--line); }
+#rutina-records dt { color: var(--muted); font-size: 12px; }
+#rutina-records dd { margin: 0; text-align: right; font-weight: 620; overflow-wrap: anywhere; }
+#rutina-records .rt-row {
+  display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center;
+  gap: 8px; width: 100%; text-align: left; margin-bottom: 7px;
+}
+#rutina-records .rt-row span { display: block; }
+#rutina-records .rt-row strong { display: block; font-size: 14px; }
+#rutina-records .rt-row small { display: block; color: var(--muted); font-size: 12px; }
+#rutina-records .rt-action { margin-top: 16px; width: 100%; }
+#rutina-records .rt-phone .rt-primary {
+  background: var(--accent); color: var(--on-accent); border-color: transparent; font-weight: 700;
+}
+#rutina-records .rt-phone button:disabled {
+  background: var(--soft); color: var(--muted); cursor: default;
+}
+#rutina-records .rt-form {
+  padding: 12px; margin-top: 14px; border: 1px solid var(--line);
+  border-radius: 12px; background: var(--card);
+}
+#rutina-records .rt-form label { display: block; margin-bottom: 10px; font-weight: 620; }
+#rutina-records .rt-form input, #rutina-records .rt-form textarea {
+  display: block; min-height: 42px; padding: 7px; margin-top: 3px;
+  width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 7px;
+  font: inherit; color: var(--text); background: var(--surface);
+}
+#rutina-records .rt-form textarea { resize:vertical; }
+#rutina-records .rt-facts .rt-comment { grid-template-columns:minmax(0,1fr); gap:4px; }
+#rutina-records .rt-comment dd { text-align:left; font-weight:400; white-space:pre-wrap; }
+#rutina-records .rt-form-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+#rutina-records .rt-form-actions button { flex: 1 1 auto; }
+</style>
+<div class="rt-controls" role="group" aria-label="Просмотр экранов и состояния связи">
+  <button type="button" data-preview="home" hidden>Главная</button>
+  <button type="button" class="vis-btn" data-preview="task" aria-pressed="false">Дело</button>
+  <button type="button" class="vis-btn" data-preview="purchase" aria-pressed="false">Покупка</button>
+  <button type="button" class="vis-btn" id="rr-offline-toggle" aria-pressed="false">Без сети</button>
+  <button type="button" class="vis-btn" id="rr-test-next" aria-pressed="false" hidden>Проверить изменённое повторение</button>
+  <button type="button" class="vis-btn" id="rr-test-refund" aria-pressed="false" hidden>Проверить покупку с возвратом</button>
+</div>
+<div class="rt-phone">
+  <header class="rt-bar">
+    <button type="button" class="rt-back" id="rr-back" aria-label="Назад" hidden>←</button>
+    <strong id="rr-screen-title">Главная</strong>
+  </header>
+  <div class="rt-body">
+    <p class="rt-offline" id="rr-offline-note" role="status" hidden>Без сети. Доступен просмотр сохранённых данных.</p>
+
+    <section data-screen="home" aria-labelledby="rr-home-title">
+      <p class="rt-muted rt-stamp">Обновлено сегодня в 12:30</p>
+      <h3 id="rr-home-title" tabindex="-1">Что предстоит</h3>
+      <h4 id="rr-today-heading">Сегодня</h4>
+      <button type="button" class="rt-row" data-open="purchase" id="rr-home-purchase">
+        <span><strong>Фильтр для воды</strong><small>Покупка · не позднее 19 ноября</small></span><span aria-hidden="true">›</span>
+      </button>
+      <h4 id="rr-soon-heading">Ближайшие дни</h4>
+      <button type="button" class="rt-row" data-open="task" id="rr-home-task">
+        <span><strong>Заменить фильтр</strong><small>Дело · 20 ноября, 18:30</small></span><span aria-hidden="true">›</span>
+      </button>
+      <p id="rr-home-empty" hidden>На сегодня и ближайшие дни записей нет.</p>
+    </section>
+
+    <section data-screen="task" aria-labelledby="rr-task-title" hidden>
+      <h3 id="rr-task-title" tabindex="-1">Заменить фильтр</h3>
+      <span class="rt-status" id="rr-task-status">Не выполнено</span>
+      <dl class="rt-facts">
+        <div><dt>Запланировано</dt><dd>20 ноября, 18:30</dd></div>
+        <div id="rr-task-done" hidden><dt>Дата выполнения</dt><dd id="rr-task-done-date"></dd></div>
+        <div id="rr-task-by" hidden><dt>Выполнила</dt><dd>Лена</dd></div>
+        <div><dt>Для кого</dt><dd>Семья</dd></div>
+        <div><dt>Повтор</dt><dd>Каждые 2 месяца</dd></div>
+        <div id="rr-next-repeat" hidden><dt>Следующее повторение</dt><dd id="rr-next-repeat-state"></dd></div>
+        <div class="rt-comment" id="rr-task-comment-row" hidden><dt>Комментарий</dt><dd id="rr-task-comment"></dd></div>
+      </dl>
+      <h4>Связанная покупка</h4>
+      <button type="button" class="rt-row" data-open="purchase">
+        <span><strong>Фильтр для воды</strong><small id="rr-task-link-status">Запланирована · не позднее 19 ноября</small></span><span aria-hidden="true">›</span>
+      </button>
+    </section>
+
+    <section data-screen="purchase" aria-labelledby="rr-purchase-title" hidden>
+      <h3 id="rr-purchase-title" tabindex="-1">Фильтр для воды</h3>
+      <span class="rt-status" id="rr-purchase-status">Запланирована</span>
+      <dl class="rt-facts">
+        <div><dt id="rr-price-label">Цена</dt><dd id="rr-price">890 ₽</dd></div>
+        <div id="rr-purchase-due"><dt>Купить не позднее</dt><dd>19 ноября</dd></div>
+        <div id="rr-purchase-done" hidden><dt>Дата покупки</dt><dd id="rr-purchase-done-date"></dd></div>
+        <div><dt>Категория</dt><dd>Дом → Хозтовары</dd></div>
+        <div><dt>Получатель</dt><dd>Семья</dd></div>
+        <div class="rt-comment" id="rr-purchase-comment-row" hidden><dt>Комментарий</dt><dd id="rr-purchase-comment"></dd></div>
+      </dl>
+      <h4>Связанное дело</h4>
+      <button type="button" class="rt-row" data-open="task">
+        <span><strong>Заменить фильтр</strong><small id="rr-purchase-link-status">Не выполнено · 20 ноября</small></span><span aria-hidden="true">›</span>
+      </button>
+    </section>
+
+    <button type="button" class="rt-action rt-primary" id="rr-complete" hidden>Отметить выполненным</button>
+    <button type="button" class="rt-action" id="rr-undo" aria-describedby="rr-undo-reason" hidden>Снять отметку «Выполнено»</button>
+    <p class="rt-muted" id="rr-undo-reason" role="status" hidden></p>
+    <button type="button" class="rt-action" id="rr-edit-comment" hidden>Изменить комментарий</button>
+    <form class="rt-form" id="rr-edit-comment-form" hidden>
+      <label>Комментарий <span class="rt-muted">(необязательно)</span>
+        <textarea id="rr-edit-comment-text" rows="3"></textarea>
+      </label>
+      <div class="rt-form-actions">
+        <button type="button" id="rr-edit-comment-cancel">Отмена</button>
+        <button type="submit" class="rt-primary" id="rr-edit-comment-save">Сохранить</button>
+      </div>
+    </form>
+    <form class="rt-form" id="rr-confirm" hidden>
+      <label id="rr-form-price-label" hidden>Фактическая сумма, ₽
+        <input type="number" inputmode="decimal" id="rr-form-price" min="0" step="0.01" disabled>
+      </label>
+      <label><span id="rr-form-date-label">Дата выполнения</span>
+        <input type="date" id="rr-form-date" value="2026-11-19" required>
+      </label>
+      <div class="rt-form-actions">
+        <button type="button" id="rr-cancel">Отмена</button>
+        <button type="submit" class="rt-primary" id="rr-save">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('rutina-records');
+  const get = name => root.querySelector('#rr-' + name);
+  const titles = {home: 'Главная', task: 'Дело', purchase: 'Покупка'};
+  const heading = {home: 'home-title', task: 'task-title', purchase: 'purchase-title'};
+  const state = {screen: 'home', offline: false, taskDate: '', purchaseDate: '', amount: 890, nextChanged: false, hasRefund: false};
+  const comments = {
+    task: 'Перед заменой перекрыть подачу воды.',
+    purchase: 'Сверить маркировку со старым картриджем.'
+  };
+  const history = [];
+  const dateFormat = new Intl.DateTimeFormat('ru', {day: 'numeric', month: 'long', timeZone: 'UTC'});
+  const currency = new Intl.NumberFormat('ru', {style: 'currency', currency: 'RUB', maximumFractionDigits: 2, minimumFractionDigits: 0});
+  const dateText = value => dateFormat.format(new Date(value + 'T00:00:00Z'));
+  const amount = get('form-price');
+  const date = get('form-date');
+  const commentForm = get('edit-comment-form');
+  const comment = get('edit-comment-text');
+  const editComment = get('edit-comment');
+  const form = get('confirm');
+  const complete = get('complete');
+  const undo = get('undo');
+  const review = document.getElementById('rutina-design-review');
+
+  function nextTaskDate(completed) {
+    const [year, month, day] = completed.split('-').map(Number);
+    const targetMonth = month - 1 + 2;
+    const lastDay = new Date(Date.UTC(year, targetMonth + 1, 0)).getUTCDate();
+    return new Date(Date.UTC(year, targetMonth, Math.min(day, lastDay))).toISOString().slice(0, 10);
+  }
+
+  function publishPurchase() {
+    review.dispatchEvent(new CustomEvent('rutina-demo-purchase-changed', {
+      detail: {date: state.purchaseDate, cents: Math.round(state.amount * 100)}
+    }));
+  }
+
+  function render() {
+    const taskDone = Boolean(state.taskDate);
+    const bought = Boolean(state.purchaseDate);
+    const onHome = state.screen === 'home';
+
+    root.querySelectorAll('[data-screen]').forEach(page => {
+      page.hidden = page.dataset.screen !== state.screen;
+    });
+    root.querySelectorAll('[data-preview]').forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.preview === state.screen));
+    });
+    get('screen-title').textContent = titles[state.screen];
+    get('back').hidden = onHome;
+    get('offline-toggle').setAttribute('aria-pressed', String(state.offline));
+    get('offline-note').hidden = !state.offline;
+
+    get('home-task').hidden = taskDone;
+    get('soon-heading').hidden = taskDone;
+    get('home-purchase').hidden = bought;
+    get('today-heading').hidden = bought;
+    get('home-empty').hidden = !(taskDone && bought);
+
+    get('task-status').textContent = taskDone ? 'Выполнено' : 'Не выполнено';
+    get('task-done').hidden = !taskDone;
+    get('task-by').hidden = !taskDone;
+    get('next-repeat').hidden = !taskDone;
+    get('next-repeat-state').textContent = !taskDone ? '' : state.nextChanged ? 'Уже изменено'
+      : 'Запланировано на ' + dateText(nextTaskDate(state.taskDate));
+    get('task-done-date').textContent = taskDone ? dateText(state.taskDate) : '';
+    get('purchase-link-status').textContent = taskDone ? 'Выполнено' : 'Не выполнено · 20 ноября';
+
+    get('purchase-status').textContent = bought ? 'Куплена' : 'Запланирована';
+    get('purchase-due').hidden = bought;
+    get('purchase-done').hidden = !bought;
+    get('purchase-done-date').textContent = bought ? dateText(state.purchaseDate) : '';
+    get('price-label').textContent = bought ? 'Фактическая сумма' : 'Цена';
+    get('price').textContent = currency.format(state.amount);
+    get('task-link-status').textContent = bought ? 'Куплена · ' + currency.format(state.amount) : 'Запланирована · не позднее 19 ноября';
+
+    for (const [kind, text] of Object.entries(comments)) {
+      get(kind + '-comment-row').hidden = !text;
+      get(kind + '-comment').textContent = text;
+    }
+    editComment.textContent = comments[state.screen] ? 'Изменить комментарий' : 'Добавить комментарий';
+    editComment.hidden = onHome || !form.hidden || !commentForm.hidden;
+    editComment.disabled = state.offline;
+    get('edit-comment-save').disabled = state.offline;
+
+    const taskCard = state.screen === 'task';
+    const marked = taskCard ? taskDone : bought;
+    const showActions = !onHome && form.hidden && commentForm.hidden;
+    const reason = taskCard
+      ? (state.nextChanged ? 'Следующее повторение уже изменено. Автоматический пересчёт невозможен.' : '')
+      : (state.hasRefund ? 'По покупке уже есть возврат. Снять отметку нельзя.' : '');
+
+    get('test-next').hidden = !taskCard || !taskDone;
+    get('test-next').setAttribute('aria-pressed', String(state.nextChanged));
+    get('test-refund').hidden = state.screen !== 'purchase' || !bought;
+    get('test-refund').setAttribute('aria-pressed', String(state.hasRefund));
+    undo.hidden = !showActions || !marked;
+    undo.disabled = state.offline || Boolean(reason);
+    undo.textContent = taskCard ? 'Снять отметку «Выполнено»' : 'Снять отметку «Куплена»';
+    get('undo-reason').hidden = undo.hidden || !reason;
+    get('undo-reason').textContent = reason;
+    complete.hidden = !showActions || marked;
+    complete.disabled = state.offline;
+    get('save').disabled = state.offline;
+    complete.textContent = state.screen === 'purchase' ? 'Отметить купленной' : 'Отметить выполненным';
+  }
+
+  function open(screen) {
+    if (screen === state.screen) return;
+    form.hidden = true;
+    commentForm.hidden = true;
+    if (screen === 'home') {
+      history.length = 0;
+    } else if (history.at(-1) === screen) {
+      history.pop();
+    } else {
+      history.push(state.screen);
+    }
+    state.screen = screen;
+    render();
+    get(heading[screen]).focus();
+  }
+
+  root.querySelectorAll('[data-preview], [data-open]').forEach(button => {
+    button.addEventListener('click', () => open(button.dataset.preview || button.dataset.open));
+  });
+  get('back').addEventListener('click', () => open(history.at(-1) || 'home'));
+  get('offline-toggle').addEventListener('click', () => {
+    state.offline = !state.offline;
+    render();
+  });
+  get('test-next').addEventListener('click', () => {
+    if (!state.taskDate) return;
+    state.nextChanged = !state.nextChanged;
+    render();
+  });
+  get('test-refund').addEventListener('click', () => {
+    if (!state.purchaseDate) return;
+    state.hasRefund = !state.hasRefund;
+    render();
+  });
+  undo.addEventListener('click', () => {
+    if (undo.hidden || undo.disabled) return;
+    if (state.screen === 'task') {
+      state.taskDate = '';
+    } else {
+      state.purchaseDate = '';
+      publishPurchase();
+    }
+    render();
+    get(heading[state.screen]).focus();
+  });
+  complete.addEventListener('click', () => {
+    const purchase = state.screen === 'purchase';
+    if (state.offline || state.screen === 'home') return;
+    amount.disabled = !purchase;
+    amount.required = purchase;
+    amount.value = '';
+    date.value = date.defaultValue;
+    date.min = purchase ? '2026-08-01' : '';
+    get('form-price-label').hidden = !purchase;
+    get('form-date-label').textContent = purchase ? 'Дата покупки' : 'Дата выполнения';
+    form.hidden = false;
+    render();
+    (purchase ? amount : date).focus();
+  });
+  get('cancel').addEventListener('click', () => {
+    form.hidden = true;
+    render();
+    complete.focus();
+  });
+  editComment.addEventListener('click', () => {
+    if (state.offline || state.screen === 'home') return;
+    comment.value = comments[state.screen];
+    commentForm.hidden = false;
+    render();
+    comment.focus();
+  });
+  get('edit-comment-cancel').addEventListener('click', () => {
+    commentForm.hidden = true;
+    render();
+    editComment.focus();
+  });
+  commentForm.addEventListener('submit', event => {
+    event.preventDefault();
+    if (commentForm.hidden || state.offline || state.screen === 'home') return;
+    comments[state.screen] = comment.value.trim();
+    commentForm.hidden = true;
+    render();
+    editComment.focus();
+  });
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (form.hidden || state.offline || !form.reportValidity()) return;
+    if (state.screen === 'purchase') {
+      state.purchaseDate = date.value;
+      state.amount = amount.valueAsNumber;
+      publishPurchase();
+    } else {
+      state.taskDate = date.value;
+    }
+    form.hidden = true;
+    render();
+    get(heading[state.screen]).focus();
+  });
+  render();
+})();
+</script>
+</div>
+
+</section>
+<section id="rv-calendar-account" data-review-panel="calendar-account" hidden>
+<div id="rutina-calendar-cabinet">
+<style>
+#rutina-calendar-cabinet {
+  color-scheme: light dark;
+  --surface: light-dark(#f6f8f3,#171d19);
+  --card: light-dark(#fff,#222a24);
+  --text: light-dark(#202d24,#ecf4ed);
+  --muted: light-dark(#4a5b50,#b7c6bb);
+  --line: light-dark(#dae3d9,#3d4a40);
+  --accent: light-dark(#154f3b,#b6edce);
+  --on-accent: light-dark(#fff,#13291e);
+  --soft: light-dark(#dceee2,#2b4838);
+  container-type: inline-size;
+}
+#rutina-calendar-cabinet * { box-sizing: border-box; }
+#rutina-calendar-cabinet [hidden] { display: none !important; }
+#rutina-calendar-cabinet .rt-controls { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; margin:0 auto 12px; }
+#rutina-calendar-cabinet .rt-controls label { display:flex; align-items:center; gap:6px; }
+#rutina-calendar-cabinet .rt-controls button, #rutina-calendar-cabinet .rt-controls select { min-height:36px; font:inherit; }
+#rutina-calendar-cabinet .rt-controls [aria-pressed=true] { background:var(--soft); color:var(--accent); }
+#rutina-calendar-cabinet .rt-board { max-width:420px; margin:auto; display:grid; gap:14px; }
+#rutina-calendar-cabinet .rt-phone {
+  min-width:0; display:flex; flex-direction:column; min-height:596px; border:1px solid var(--line); border-radius:24px; overflow:hidden;
+  background:var(--surface); color:var(--text); font:14px/1.4 system-ui,sans-serif;
+}
+#rutina-calendar-cabinet .rt-phone.rt-other { display:none; }
+#rutina-calendar-cabinet .rt-phone button {
+  color:inherit; font:inherit; cursor:pointer; min-width:0; min-height:42px;
+  background:var(--card); border:1px solid var(--line); border-radius:9px;
+}
+#rutina-calendar-cabinet .rt-phone button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+#rutina-calendar-cabinet .rt-top { padding:16px 15px 12px; border-bottom:1px solid var(--line); }
+#rutina-calendar-cabinet .rt-top h3 { font-size:24px; letter-spacing:-.45px; font-weight:730; margin:0; }
+#rutina-calendar-cabinet .rt-top small, #rutina-calendar-cabinet .rt-muted { color:var(--muted); font-size:12px; }
+#rutina-calendar-cabinet .rt-body { flex:1; min-width:0; padding:12px; }
+#rutina-calendar-cabinet .rt-body h4 { margin:0 0 8px; font-size:15px; }
+#rutina-calendar-cabinet .rt-month {
+  display:grid; grid-template-columns:42px minmax(0,1fr) 42px;
+  align-items:center; text-align:center; gap:4px; margin:0 0 8px;
+}
+#rutina-calendar-cabinet .rt-month button { font-size:18px; }
+#rutina-calendar-cabinet .rt-week, #rutina-calendar-cabinet .rt-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:2px; }
+#rutina-calendar-cabinet .rt-week { text-align:center; color:var(--muted); font-size:11px; }
+#rutina-calendar-cabinet .rt-days button {
+  display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2px 0;
+  border:1px solid transparent; background:transparent; font-variant-numeric:tabular-nums;
+}
+#rutina-calendar-cabinet .rt-days [aria-current=date] { border-color:var(--accent); }
+#rutina-calendar-cabinet .rt-days [aria-pressed=true] { color:var(--on-accent); background:var(--accent); font-weight:700; }
+#rutina-calendar-cabinet .rt-dot { width:4px; height:4px; margin-top:3px; border-radius:50%; background:currentColor; }
+#rutina-calendar-cabinet .rt-agenda { margin-top:14px; }
+#rutina-calendar-cabinet .rt-row, #rutina-calendar-cabinet .rt-info {
+  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center;
+  gap:8px; text-align:left; width:100%; padding:6px 10px;
+}
+#rutina-calendar-cabinet .rt-list { display:grid; gap:5px; }
+#rutina-calendar-cabinet .rt-row strong { display:block; overflow-wrap:anywhere; }
+#rutina-calendar-cabinet .rt-row small { display:block; font-size:11px; color:var(--muted); }
+#rutina-calendar-cabinet .rt-empty { margin:0; padding:10px 0; color:var(--muted); }
+#rutina-calendar-cabinet .rt-profile {
+  display:grid; grid-template-columns:42px minmax(0,1fr); align-items:center;
+  gap:10px; padding:13px; border:1px solid var(--line); border-radius:12px; background:var(--card);
+}
+#rutina-calendar-cabinet .rt-avatar { display:grid; place-items:center; width:42px; height:42px; border-radius:50%; color:var(--accent); background:var(--soft); font-weight:730; }
+#rutina-calendar-cabinet .rt-profile strong { display:block; font-size:16px; }
+#rutina-calendar-cabinet .rt-profile small { display:block; color:var(--muted); font-size:12px; overflow-wrap:anywhere; }
+#rutina-calendar-cabinet .rt-info { border-bottom:1px solid var(--line); }
+#rutina-calendar-cabinet .rt-block { margin-top:16px; }
+#rutina-calendar-cabinet .rt-block h4 { margin:0 0 6px; }
+#rutina-calendar-cabinet .rt-family-read { list-style:none; padding:0; margin:0; }
+#rutina-calendar-cabinet .rt-family-read li { min-height:42px; display:flex; align-items:center; padding:6px 10px; border:1px solid var(--line); border-radius:9px; background:var(--card); }
+#rutina-calendar-cabinet .rt-detail { margin-top:10px; padding:10px; border:1px solid var(--line); border-radius:10px; background:var(--card); }
+#rutina-calendar-cabinet .rt-detail header { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+#rutina-calendar-cabinet .rt-detail header button { min-height:36px; padding:3px 8px; }
+#rutina-calendar-cabinet .rt-detail p { margin:6px 0 0; }
+#rutina-calendar-cabinet .rt-detail ul { margin:6px 0 0; padding-left:20px; }
+#rutina-calendar-cabinet .rt-nav {
+  display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); align-items:stretch; gap:1px;
+  padding:7px 4px 10px; border-top:1px solid var(--line); background:var(--card);
+}
+#rutina-calendar-cabinet .rt-nav button, #rutina-calendar-cabinet .rt-nav span {
+  display:grid; place-items:center; padding:0 2px; font-size:11px; color:var(--muted); text-align:center;
+  min-height:42px; border-color:transparent;
+}
+#rutina-calendar-cabinet .rt-nav [aria-current=page] { color:var(--accent); font-weight:720; background:var(--soft); }
+@container (min-width: 680px) {
+  #rutina-calendar-cabinet .rt-board { max-width:850px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  #rutina-calendar-cabinet .rt-phone.rt-other { display:flex; }
+  #rutina-calendar-cabinet .rt-controls [data-screen] { display:none; }
+}
+#rutina-calendar-cabinet .rt-type { display:block; margin:8px 0 4px; font-size:12px; color:var(--muted); }
+#rcc-family-type { width:100%; min-height:42px; padding:6px 9px; background:var(--surface); color:var(--text); font:inherit; border:1px solid var(--line); border-radius:8px; }
+#rutina-calendar-cabinet .rt-access { margin:8px 0; }
+#rutina-calendar-cabinet .rt-access div { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 8px; padding:5px 0; border-bottom:1px solid var(--line); }
+#rutina-calendar-cabinet .rt-access dt { color:var(--muted); font-size:12px; }
+#rutina-calendar-cabinet .rt-access dd { margin:0; font-size:12px; }
+</style>
+<div class="rt-controls" role="group" aria-label="Просмотр экранов и ролей">
+  <button type="button" class="vis-btn" data-screen="calendar" aria-pressed="true">Календарь</button>
+  <button type="button" class="vis-btn" data-screen="account" aria-pressed="false">Кабинет</button>
+  <label>Роль в кабинете
+    <select id="rcc-role" class="vis-form-select">
+      <option value="admin">Администратор</option>
+      <option value="member">Участник</option>
+    </select>
+  </label>
+</div>
+<div class="rt-board">
+  <section class="rt-phone" id="rcc-calendar" aria-labelledby="rcc-calendar-title">
+    <header class="rt-top"><h3 id="rcc-calendar-title" tabindex="-1">Календарь</h3><small>Обновлено сегодня в 12:30</small></header>
+    <div class="rt-body">
+      <p><a href="notes.html">Заметки</a></p>
+      <div class="rt-month">
+        <button type="button" id="rcc-prev" aria-label="Предыдущий месяц">‹</button>
+        <strong id="rcc-month" aria-live="polite">Ноябрь 2026</strong>
+        <button type="button" id="rcc-next" aria-label="Следующий месяц">›</button>
+      </div>
+      <div class="rt-week" aria-hidden="true"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+      <div class="rt-days" id="rcc-days" role="group" aria-label="Дни месяца"></div>
+      <section class="rt-agenda" aria-labelledby="rcc-day-title">
+        <h4 id="rcc-day-title" aria-live="polite">20 ноября, пятница</h4>
+        <div class="rt-list" id="rcc-agenda"></div>
+        <p class="rt-empty" id="rcc-empty" hidden>На этот день записей нет.</p>
+        <section class="rt-detail" id="rcc-entry" aria-labelledby="rcc-entry-title" hidden>
+          <header><strong id="rcc-entry-title"></strong><button type="button" id="rcc-close-entry">Закрыть</button></header>
+          <p id="rcc-entry-body"></p>
+        </section>
+      </section>
+    </div>
+    <nav class="rt-nav" aria-label="Разделы приложения">
+      <span>Главная</span><span>Покупки</span><span>Дела</span>
+      <button type="button" data-screen="calendar" aria-current="page">Календарь</button>
+      <button type="button" data-screen="account">Кабинет</button>
+    </nav>
+  </section>
+  <section class="rt-phone rt-other" id="rcc-account" aria-labelledby="rcc-account-title">
+    <header class="rt-top"><h3 id="rcc-account-title" tabindex="-1">Кабинет</h3></header>
+    <div class="rt-body">
+      <div class="rt-profile">
+        <span class="rt-avatar" id="rcc-avatar" aria-hidden="true">М</span>
+        <div><strong id="rcc-person">Марина</strong><small id="rcc-email">marina@example.com</small><small id="rcc-role-text">Администратор дома</small></div>
+      </div>
+      <section class="rt-block" aria-labelledby="rcc-home-title">
+        <h4 id="rcc-home-title">Дом</h4>
+        <div class="rt-info"><span class="rt-muted">Часовой пояс</span><strong>Иркутск (UTC+8)</strong></div>
+        <p id="rcc-opening-balance"><a href="finance-states.html?view=cabinet&amp;role=admin">Начальный остаток</a></p>
+      </section>
+      <section class="rt-block" aria-labelledby="rcc-family-read-title" id="rcc-family-read" hidden>
+        <h4 id="rcc-family-read-title">Состав семьи</h4>
+        <p><a href="family-access.html?role=member">Макет состава семьи</a></p>
+        <ul class="rt-list rt-family-read" id="rcc-family-names"></ul>
+      </section>
+      <section class="rt-block" aria-labelledby="rcc-family-title" id="rcc-family">
+        <header class="rt-info"><h4 id="rcc-family-title">Состав семьи</h4><button type="button" id="rcc-add-member">Добавить</button></header>
+        <p><a href="family-access.html">Макет управления доступом</a></p>
+        <div class="rt-list">
+          <button type="button" class="rt-row" data-member="alex"><span><strong>Алексей</strong></span><span aria-hidden="true">›</span></button>
+          <button type="button" class="rt-row" data-member="vera"><span><strong>Вера</strong></span><span aria-hidden="true">›</span></button>
+          <button type="button" class="rt-row" data-member="misha"><span><strong>Миша</strong></span><span aria-hidden="true">›</span></button>
+          <button type="button" class="rt-row" data-member="inna"><span><strong>Инна</strong></span><span aria-hidden="true">›</span></button>
+        </div>
+        <section class="rt-detail" id="rcc-member-detail" aria-labelledby="rcc-member-title" hidden>
+          <header><strong id="rcc-member-title"></strong><button type="button" id="rcc-close-member">Закрыть</button></header>
+          <dl class="rt-access">
+            <div><dt>Доступ к приложению</dt><dd id="rcc-member-access"></dd></div>
+            <div id="rcc-member-invite-line" hidden><dt>Приглашение</dt><dd>Ожидает принятия</dd></div>
+          </dl>
+          <p class="rt-muted">Действия с доступом</p>
+          <ul id="rcc-member-actions"></ul>
+        </section>
+        <section class="rt-detail" id="rcc-add-detail" aria-labelledby="rcc-add-title" hidden>
+          <header><strong id="rcc-add-title">Добавить члена семьи</strong><button type="button" id="rcc-close-add">Закрыть</button></header>
+          <label class="rt-type" for="rcc-family-type">Тип члена семьи</label>
+          <select id="rcc-family-type">
+            <option value="" selected disabled>Выберите тип</option>
+            <option value="person">Человек</option>
+            <option value="pet">Питомец</option>
+          </select>
+        </section>
+      </section>
+    </div>
+    <nav class="rt-nav" aria-label="Разделы приложения">
+      <span>Главная</span><span>Покупки</span><span>Дела</span>
+      <button type="button" data-screen="calendar">Календарь</button>
+      <button type="button" data-screen="account" aria-current="page">Кабинет</button>
+    </nav>
+  </section>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('rutina-calendar-cabinet');
+  const get = id => root.querySelector('#rcc-' + id);
+  const initialMonth = new Date(Date.UTC(2026, 10, 1));
+  let month = initialMonth;
+  let selectedDay = 20;
+  let entryTrigger;
+  let memberTrigger;
+  const monthFormat = new Intl.DateTimeFormat('ru', {month:'long', year:'numeric', timeZone:'UTC'});
+  const dayFormat = new Intl.DateTimeFormat('ru', {day:'numeric', month:'long', weekday:'long', timeZone:'UTC'});
+
+  const payment = {title:'Интернет', summary:'Обязательный платёж · 850 ₽', details:'Ежемесячный платёж. К оплате 850 ₽. Его можно оплатить заранее.'};
+  const samples = {
+    19: [{title:'Фильтр для воды', summary:'Покупка · не позднее 19 ноября', details:'Запланирована. Цена 890 ₽. Категория «Дом → Хозтовары». Получатель — семья.'}],
+    20: [
+      {title:'Заменить фильтр', summary:'Дело · 18:30', details:'Запланировано на 18:30. Для семьи. Повторяется каждые 2 месяца.'},
+      {title:'Размер фильтра', summary:'Заметка', details:'Посмотреть маркировку старого картриджа перед заказом.'}
+    ],
+    17: [
+      {title:'Аптека', summary:'Покупка · 425 ₽', details:'Куплена 17 ноября. Фактическая сумма 425 ₽. Получатель — семья.'},
+      {title:'Забрать посылку', summary:'Дело · не выполнено', details:'Было запланировано на 17 ноября.'}
+    ]
+  };
+  const members = {
+    alex: {name:'Алексей', access:'Активен', actions:['Отправить ссылку сброса пароля','Приостановить доступ']},
+    vera: {name:'Вера', access:'Без учётной записи', pendingInvite:true, actions:['Отправить приглашение заново','Отменить приглашение']},
+    misha: {name:'Миша', access:'Без учётной записи', actions:['Пригласить в приложение']},
+    inna: {name:'Инна', access:'Приостановлен', actions:['Вернуть доступ']}
+  };
+
+  function recordsFor(day) {
+    const records = +month === +initialMonth ? samples[day] || [] : [];
+    return day === 20 && month >= initialMonth ? [...records, payment] : records;
+  }
+
+  function selectedDate(day) {
+    return new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth(), day));
+  }
+
+  function renderAgenda() {
+    const heading = dayFormat.format(selectedDate(selectedDay));
+    get('day-title').textContent = heading.replace(/^(.*?), (.*)$/, '$2, $1');
+    get('entry').hidden = true;
+    const records = recordsFor(selectedDay);
+    get('empty').hidden = records.length > 0;
+    get('agenda').replaceChildren(...records.map(record => {
+      const button = document.createElement('button');
+      const copy = document.createElement('span');
+      const title = document.createElement('strong');
+      const summary = document.createElement('small');
+      const arrow = document.createElement('span');
+      button.type = 'button';
+      button.className = 'rt-row';
+      title.textContent = record.title;
+      summary.textContent = record.summary;
+      arrow.textContent = '›';
+      arrow.setAttribute('aria-hidden', 'true');
+      copy.append(title, summary);
+      button.append(copy, arrow);
+      button.addEventListener('click', () => {
+        entryTrigger = button;
+        get('entry-title').textContent = record.title;
+        get('entry-body').textContent = record.details;
+        get('entry').hidden = false;
+        get('close-entry').focus();
+      });
+      return button;
+    }));
+  }
+
+  function renderCalendar() {
+    const label = monthFormat.format(month).replace(/\s*г\.$/, '');
+    get('month').textContent = label.charAt(0).toUpperCase() + label.slice(1);
+    const offset = (month.getUTCDay() + 6) % 7;
+    const daysInMonth = new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + 1, 0)).getUTCDate();
+    const tiles = Array.from({length: offset}, () => document.createElement('span'));
+    for (let day = 1; day <= daysInMonth; day++) {
+      const tile = document.createElement('button');
+      const count = recordsFor(day).length;
+      tile.type = 'button';
+      tile.textContent = String(day);
+      tile.setAttribute('aria-label', dayFormat.format(selectedDate(day)) + (count ? ', записей: ' + count : ''));
+      tile.setAttribute('aria-pressed', String(day === selectedDay));
+      if (+month === +initialMonth && day === 19) tile.setAttribute('aria-current', 'date');
+      if (count) {
+        const dot = document.createElement('span');
+        dot.className = 'rt-dot';
+        dot.setAttribute('aria-hidden', 'true');
+        tile.append(dot);
+      }
+      tile.addEventListener('click', () => {
+        selectedDay = day;
+        for (const button of get('days').querySelectorAll('button')) {
+          button.setAttribute('aria-pressed', String(button === tile));
+        }
+        renderAgenda();
+      });
+      tiles.push(tile);
+    }
+    get('days').replaceChildren(...tiles);
+    renderAgenda();
+  }
+
+  function changeMonth(delta) {
+    month = new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + delta, 1));
+    selectedDay = Math.min(selectedDay, new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + 1, 0)).getUTCDate());
+    renderCalendar();
+  }
+
+  function renderRole() {
+    const admin = get('role').value === 'admin';
+    get('avatar').textContent = admin ? 'М' : 'А';
+    get('person').textContent = admin ? 'Марина' : 'Алексей';
+    get('email').textContent = admin ? 'marina@example.com' : 'alex@example.com';
+    get('role-text').textContent = admin ? 'Администратор дома' : 'Участник дома';
+    get('opening-balance').hidden = !admin;
+    get('family').hidden = !admin;
+    get('family-read').hidden = admin;
+    get('member-detail').hidden = true;
+    get('add-detail').hidden = true;
+  }
+
+  function showScreen(screen) {
+    for (const name of ['calendar', 'account']) {
+      get(name).classList.toggle('rt-other', name !== screen);
+    }
+    for (const button of root.querySelectorAll('.rt-controls [data-screen]')) {
+      button.setAttribute('aria-pressed', String(button.dataset.screen === screen));
+    }
+    get(screen + '-title').focus();
+  }
+
+  get('prev').addEventListener('click', () => changeMonth(-1));
+  get('next').addEventListener('click', () => changeMonth(1));
+  get('close-entry').addEventListener('click', () => {
+    get('entry').hidden = true;
+    entryTrigger?.focus();
+  });
+  get('role').addEventListener('change', () => {
+    renderRole();
+    showScreen('account');
+  });
+  root.querySelectorAll('[data-screen]').forEach(button =>
+    button.addEventListener('click', () => showScreen(button.dataset.screen))
+  );
+  function showFamilyDetail(button, member) {
+    if (get('family').hidden) return;
+    memberTrigger = button;
+    get('add-detail').hidden = true;
+    get('member-title').textContent = member.name;
+    get('member-access').textContent = member.access;
+    get('member-invite-line').hidden = !member.pendingInvite;
+    get('member-actions').replaceChildren(...member.actions.map(action => {
+      const item = document.createElement('li');
+      item.textContent = action;
+      return item;
+    }));
+    get('member-detail').hidden = false;
+    get('close-member').focus();
+  }
+
+  root.querySelectorAll('[data-member]').forEach(button => {
+    const member = members[button.dataset.member];
+    button.addEventListener('click', () => showFamilyDetail(button, member));
+  });
+  get('add-member').addEventListener('click', () => {
+    if (get('family').hidden) return;
+    get('member-detail').hidden = true;
+    get('family-type').value = '';
+    get('add-detail').hidden = false;
+    get('family-type').focus();
+  });
+  get('close-add').addEventListener('click', () => {
+    get('add-detail').hidden = true;
+    get('add-member').focus();
+  });
+  get('close-member').addEventListener('click', () => {
+    get('member-detail').hidden = true;
+    memberTrigger?.focus();
+  });
+  get('family-names').replaceChildren(...['Марина', ...Object.values(members).map(member => member.name)].map(name => {
+    const item = document.createElement('li');
+    item.textContent = name;
+    return item;
+  }));
+  renderCalendar();
+  renderRole();
+})();
+</script>
+</div>
+
+</section>
+<section id="rv-finance" data-review-panel="finance" hidden>
+<div id="rutina-finances">
+<style>
+#rutina-finances {
+  color-scheme:light dark;
+  --surface:light-dark(#f6f8f3,#171d19); --card:light-dark(#fff,#222a24);
+  --text:light-dark(#202d24,#ecf4ed); --muted:light-dark(#4a5b50,#b7c6bb);
+  --line:light-dark(#dae3d9,#3d4a40); --accent:light-dark(#154f3b,#b6edce);
+  --soft:light-dark(#dceee2,#2b4838); --on-accent:light-dark(#fff,#13291e);
+  --error:light-dark(#8f3524,#ffbeaa);
+  font:14px/1.4 system-ui,sans-serif;
+}
+#rutina-finances * { box-sizing:border-box; }
+#rutina-finances [hidden] { display:none !important; }
+#rutina-finances .rf-controls { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-bottom:12px; }
+#rutina-finances .rf-controls button { min-height:36px; font:inherit; }
+#rutina-finances .rf-controls [aria-pressed=true] { background:var(--soft); color:var(--accent); }
+#rutina-finances .rf-phone {
+  max-width:430px; min-height:560px; margin:auto; overflow:hidden; color:var(--text);
+  background:var(--surface); border:1px solid var(--line); border-radius:24px;
+}
+#rutina-finances .rf-bar { min-height:62px; display:flex; align-items:center; gap:7px; padding:8px 14px; border-bottom:1px solid var(--line); }
+#rutina-finances h3 { margin:0; font-size:22px; letter-spacing:-.4px; }
+#rutina-finances h4 { margin:0 0 7px; font-size:16px; }
+#rutina-finances .rf-body { padding:14px; }
+#rutina-finances .rf-phone button, #rutina-finances .rf-phone input, #rutina-finances .rf-phone select, #rutina-finances .rf-phone textarea {
+  min-width:0; min-height:43px; font:inherit; color:inherit; background:var(--card);
+  border:1px solid var(--line); border-radius:9px; padding:6px 9px;
+}
+#rutina-finances .rf-phone button { cursor:pointer; }
+#rutina-finances .rf-phone button:disabled { background:var(--soft); color:var(--muted); cursor:default; }
+#rutina-finances .rf-phone :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+#rutina-finances .rf-phone .rf-primary { background:var(--accent); border-color:transparent; color:var(--on-accent); font-weight:680; }
+#rutina-finances .rf-phone .rf-back { background:transparent; border-color:transparent; }
+#rutina-finances .rf-muted { color:var(--muted); font-size:12px; }
+#rutina-finances .rf-timestamp { margin:0 0 9px; }
+#rutina-finances .rf-balance {
+  background:var(--soft); color:var(--accent); border-radius:12px; padding:12px 13px; margin-bottom:10px;
+}
+#rutina-finances .rf-balance span { display:block; font-weight:620; }
+#rutina-finances .rf-balance strong { display:block; font-size:24px; letter-spacing:-.3px; overflow-wrap:anywhere; }
+#rutina-finances .rf-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+#rutina-finances .rf-grid + .rf-grid { margin-top:6px; }
+#rutina-finances .rf-field { display:grid; min-width:0; gap:3px; font-weight:620; }
+#rutina-finances .rf-field input, #rutina-finances .rf-field select { width:100%; }
+#rutina-finances .rf-totals { margin:9px 0 0; }
+#rutina-finances .rf-totals div { padding:8px 7px; border:1px solid var(--line); border-radius:9px; background:var(--card); min-width:0; }
+#rutina-finances .rf-totals dt { color:var(--muted); font-size:12px; }
+#rutina-finances .rf-totals dd { margin:4px 0 0; font-weight:710; overflow-wrap:anywhere; }
+#rutina-finances .rf-money { font-variant-numeric:tabular-nums; }
+#rutina-finances .rf-section { margin-top:16px; }
+#rutina-finances .rf-note { margin:9px 0; padding:8px 9px; border:1px solid var(--line); border-radius:9px; background:var(--card); }
+#rutina-finances .rf-operations, #rutina-finances .rf-breakdown { margin:0; padding:0; list-style:none; }
+#rutina-finances .rf-row { min-width:0; padding:8px 0; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; }
+#rutina-finances .rf-row + .rf-row { border-top:1px solid var(--line); }
+#rutina-finances .rf-row strong { display:block; overflow-wrap:anywhere; }
+#rutina-finances .rf-row small { display:block; color:var(--muted); font-size:12px; }
+#rutina-finances .rf-row .rf-money { text-align:right; font-size:13px; }
+#rutina-finances .rf-form, #rutina-finances .rf-filters { display:grid; gap:8px; }
+#rutina-finances .rf-form textarea { resize:vertical; }
+#rutina-finances .rf-error { color:var(--error); margin:5px 0; }
+#rutina-finances .rf-filters button, #rutina-finances .rf-overview-actions button { width:100%; }
+#rutina-finances .rf-report-total { margin:0 0 8px; }
+#rutina-finances .rf-report-total strong { font-size:22px; display:block; }
+</style>
+<div class="rf-controls" role="group" aria-label="Переходы и проверка связи">
+  <button type="button" class="vis-btn" id="rf-overview" aria-pressed="true" hidden>Финансы</button>
+  <button type="button" class="vis-btn" id="rf-from-home" aria-pressed="false" hidden>Отчёт с главной</button>
+  <button type="button" class="vis-btn" id="rf-offline" aria-pressed="false">Без сети</button>
+</div>
+<div class="rf-phone" lang="ru">
+  <header class="rf-bar">
+    <button type="button" id="rf-back" class="rf-back" aria-label="На главную">←</button>
+    <h3 id="rf-title" tabindex="-1">Финансы</h3>
+  </header>
+  <div class="rf-body">
+    <p class="rf-note rf-muted" id="rf-offline-note" hidden>Без сети. Доступен просмотр сохранённых данных.</p>
+    <section data-screen="overview">
+      <p class="rf-timestamp rf-muted">Обновлено 19 ноября в 12:30</p>
+      <div class="rf-balance">
+        <span>Текущий остаток</span>
+        <strong class="rf-money" id="rf-balance"></strong>
+      </div>
+      <label class="rf-field">Месяц<select id="rf-overview-month">
+        <option value="2026-11">Ноябрь 2026</option><option value="2026-10">Октябрь 2026</option>
+        <option value="2026-09">Сентябрь 2026</option><option value="2026-08">Август 2026</option>
+      </select></label>
+      <dl class="rf-grid rf-totals" id="rf-month-totals">
+        <div><dt>Доходы за месяц</dt><dd class="rf-money" id="rf-income-total"></dd></div>
+        <div><dt>Расходы за месяц</dt><dd class="rf-money" id="rf-expense-total"></dd></div>
+      </dl>
+      <p class="rf-muted" id="rf-refunds-note" hidden></p>
+      <p class="rf-note" id="rf-overview-need-net" hidden>Для просмотра операций за этот месяц нужна связь.</p>
+      <div class="rf-grid rf-section rf-overview-actions">
+        <button type="button" id="rf-add-income" class="rf-primary">Добавить доход</button>
+        <button type="button" id="rf-open-report">Посмотреть отчёт</button>
+      </div>
+      <p><a href="finance-states.html">Категории и общие состояния</a></p>
+      <section class="rf-section" id="rf-operations-section" aria-labelledby="rf-operations-title">
+        <h4 id="rf-operations-title">Операции за месяц</h4>
+        <ul class="rf-operations" id="rf-operations"></ul>
+        <p class="rf-muted" id="rf-no-operations" hidden>В этом месяце ещё нет операций.</p>
+      </section>
+    </section>
+    <section data-screen="report" hidden>
+      <div class="rf-filters">
+        <label class="rf-field">Период<select id="rf-period">
+          <option value="month">Месяц</option><option value="year">Год</option><option value="range">Выбрать даты</option>
+        </select></label>
+        <label class="rf-field" id="rf-month-field">Месяц<select id="rf-report-month">
+          <option value="2026-11">Ноябрь 2026</option><option value="2026-10">Октябрь 2026</option>
+          <option value="2026-09">Сентябрь 2026</option><option value="2026-08">Август 2026</option>
+        </select></label>
+        <label class="rf-field" id="rf-year-field" hidden>Год<select id="rf-year">
+          <option value="2026">2026</option><option value="2025">2025</option>
+        </select></label>
+        <div class="rf-grid" id="rf-range-field" hidden>
+          <label class="rf-field">С<input type="date" id="rf-start" value="2026-10-01"></label>
+          <label class="rf-field">По<input type="date" id="rf-end" value="2026-11-19"></label>
+        </div>
+        <div class="rf-grid">
+          <label class="rf-field">Категория<select id="rf-category"><option value="">Все категории</option><option>Дом</option><option>Одежда</option></select></label>
+          <label class="rf-field">Подкатегория<select id="rf-subcategory"><option value="">Все подкатегории</option></select></label>
+        </div>
+        <label class="rf-field">Получатель<select id="rf-person">
+          <option value="">Все получатели</option><option>Семья</option><option>Марина</option><option>Алексей</option>
+        </select></label>
+      </div>
+      <p class="rf-note" id="rf-report-message" role="status" hidden></p>
+      <section class="rf-section" id="rf-report-result" aria-label="Расходы за выбранный период">
+        <p class="rf-timestamp rf-muted">Обновлено 19 ноября в 12:30</p>
+        <div class="rf-balance rf-report-total">
+          <span>Расходы с учётом возвратов</span>
+          <strong class="rf-money" id="rf-report-total"></strong>
+        </div>
+        <p class="rf-muted" id="rf-report-refunds" hidden></p>
+        <h4>По категориям</h4>
+        <ul class="rf-breakdown" id="rf-breakdown"></ul>
+        <p class="rf-muted" id="rf-no-results" hidden>За этот период по выбранным фильтрам покупок и возвратов нет.</p>
+      </section>
+    </section>
+    <section data-screen="income" hidden>
+      <form class="rf-form" id="rf-income-form" novalidate>
+        <div class="rf-grid">
+          <label class="rf-field">Сумма, ₽<input inputmode="decimal" id="rf-income-amount" required></label>
+          <label class="rf-field">Дата получения<input type="date" id="rf-income-date" required></label>
+        </div>
+        <label class="rf-field">Категория<select id="rf-income-category" required>
+          <option value="">Выберите категорию</option><option>Зарплата</option><option>Подарки</option>
+        </select></label>
+        <label class="rf-field">Комментарий <span class="rf-muted">(необязательно)</span><textarea id="rf-income-comment" rows="3"></textarea></label>
+        <p class="rf-error" id="rf-income-error" role="alert" hidden></p>
+        <button type="submit" class="rf-primary" id="rf-income-save">Сохранить</button>
+      </form>
+    </section>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('rutina-finances');
+  const get = key => root.querySelector('#rf-' + key);
+  const today = '2026-11-19';
+  const cacheStart = '2026-09-01';
+  const accountingStart = '2026-08-01';
+  const initialBalance = 1800000;
+  const purchases = [
+    {id:'old', name:'Ремонт смесителя', date:'2026-08-04', cents:360000, category:'Дом', subcategory:'Ремонт', person:'Семья'},
+    {id:'shoes', name:'Кроссовки', date:'2026-10-28', cents:420000, category:'Одежда', subcategory:'Обувь', person:'Алексей'},
+    {id:'internet', name:'Интернет', date:'2026-11-05', cents:85000, category:'Дом', subcategory:'Связь', person:'Семья'},
+    {id:'food', name:'Продукты', date:'2026-11-10', cents:350000, category:'Дом', subcategory:'Продукты', person:'Семья'},
+    {id:'coat', name:'Куртка', date:'2026-11-14', cents:360000, category:'Одежда', subcategory:'Верхняя одежда', person:'Марина'},
+    {id:'filter', name:'Фильтр для воды', date:'2026-11-19', cents:89000, category:'Дом', subcategory:'Хозтовары', person:'Семья'}
+  ];
+  const demoPurchase = purchases.find(purchase => purchase.id === 'filter');
+  let demoPurchaseBought = false;
+  document.getElementById('rutina-design-review').addEventListener('rutina-demo-purchase-changed', event => {
+    demoPurchaseBought = Boolean(event.detail.date);
+    if (demoPurchaseBought) {
+      demoPurchase.date = event.detail.date;
+      demoPurchase.cents = event.detail.cents;
+    }
+  });
+  const refunds = [{purchaseId:'shoes', date:'2026-11-12', cents:80000}];
+  const incomes = [
+    {name:'Зарплата', date:'2026-10-10', cents:3800000},
+    {name:'Зарплата', date:'2026-11-10', cents:4100000}
+  ];
+  let screen = 'overview';
+  let reportFromHome = false;
+  let offline = false;
+  const currency = new Intl.NumberFormat('ru', {style:'currency', currency:'RUB', minimumFractionDigits:0, maximumFractionDigits:2});
+  const dates = new Intl.DateTimeFormat('ru', {day:'numeric', month:'short', timeZone:'UTC'});
+  const money = cents => currency.format(cents / 100);
+  const dateLabel = value => dates.format(new Date(value + 'T00:00:00Z'));
+
+  function row(title, description, cents, prefix = '') {
+    const item = document.createElement('li');
+    const left = document.createElement('span');
+    const name = document.createElement('strong');
+    const secondary = document.createElement('small');
+    const total = document.createElement('strong');
+    item.className = 'rf-row';
+    name.textContent = title;
+    secondary.textContent = description;
+    secondary.hidden = !description;
+    total.className = 'rf-money';
+    total.textContent = prefix + money(cents);
+    left.append(name, secondary);
+    item.append(left, total);
+    return item;
+  }
+
+  function monthPeriod(value) {
+    const [year, month] = value.split('-').map(Number);
+    const end = new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10);
+    return [value + '-01', end];
+  }
+  const within = (entry, [start, end]) => entry.date >= start && entry.date <= end;
+  const available = ([start]) => !offline || start >= cacheStart;
+  const sum = entries => entries.reduce((total, entry) => total + entry.cents, 0);
+  function expenseEntries() {
+    return [
+      ...purchases.filter(purchase => purchase !== demoPurchase || demoPurchaseBought)
+        .map(purchase => ({...purchase, kind:'purchase'})),
+      ...refunds.map(refund => {
+        const purchase = purchases.find(item => item.id === refund.purchaseId);
+        return {...purchase, date:refund.date, cents:-refund.cents, kind:'refund'};
+      })
+    ];
+  }
+  function renderOverview() {
+    const bounds = monthPeriod(get('overview-month').value);
+    const expenses = expenseEntries();
+    get('balance').textContent = money(initialBalance + sum(incomes) - sum(expenses));
+    const showMonth = available(bounds);
+    get('month-totals').hidden = !showMonth;
+    get('operations-section').hidden = !showMonth;
+    get('overview-need-net').hidden = showMonth;
+    get('refunds-note').hidden = true;
+    if (!showMonth) return;
+    const monthIncome = incomes.filter(entry => within(entry, bounds));
+    const monthExpenses = expenses.filter(entry => within(entry, bounds));
+    const returned = -sum(monthExpenses.filter(entry => entry.kind === 'refund'));
+    get('income-total').textContent = money(sum(monthIncome));
+    get('expense-total').textContent = money(sum(monthExpenses));
+    get('refunds-note').hidden = !returned;
+    get('refunds-note').textContent = returned ? 'Учтены возвраты за месяц · ' + money(returned) : '';
+    const activity = [...monthIncome.map(entry => ({...entry, kind:'income'})), ...monthExpenses]
+      .sort((a,b) => b.date.localeCompare(a.date));
+    get('no-operations').hidden = Boolean(activity.length);
+    get('operations').replaceChildren(...activity.map(entry => {
+      const label = entry.kind === 'income' ? 'Доход' : entry.kind === 'refund' ? 'Возврат' : 'Покупка';
+      const description = [label, dateLabel(entry.date), entry.comment].filter(Boolean).join(' · ');
+      return row(entry.name, description, Math.abs(entry.cents), entry.kind === 'purchase' ? '−' : '+');
+    }));
+  }
+  function period() {
+    const type = get('period').value;
+    if (type === 'month') return monthPeriod(get('report-month').value);
+    if (type === 'year') {
+      const year = get('year').value;
+      return [year + '-01-01', year + '-12-31'];
+    }
+    return [get('start').value, get('end').value];
+  }
+  function renderReport() {
+    const mode = get('period').value;
+    get('month-field').hidden = mode !== 'month';
+    get('year-field').hidden = mode !== 'year';
+    get('range-field').hidden = mode !== 'range';
+    const bounds = period();
+    const [start, end] = bounds;
+    const message = !start || !end ? 'Укажите начало и конец периода.' :
+      start > end ? 'Конец периода должен быть не раньше начала.' :
+      !available(bounds) ? 'Для отчёта за этот период нужна связь. Часть данных отсутствует на телефоне.' : '';
+    get('report-message').hidden = !message;
+    get('report-message').textContent = message;
+    get('report-result').hidden = Boolean(message);
+    if (message) return;
+    const category = get('category').value;
+    const subcategory = get('subcategory').value;
+    const person = get('person').value;
+    const filtered = expenseEntries().filter(entry => within(entry, bounds) &&
+      (!category || entry.category === category) && (!subcategory || entry.subcategory === subcategory) &&
+      (!person || entry.person === person));
+    const returned = -sum(filtered.filter(entry => entry.kind === 'refund'));
+    get('report-total').textContent = money(sum(filtered));
+    get('report-refunds').hidden = !returned;
+    get('report-refunds').textContent = returned ? 'Учтены возвраты за период · ' + money(returned) : '';
+    const groups = new Map();
+    for (const item of filtered) {
+      const key = item.category + ' → ' + item.subcategory;
+      groups.set(key, (groups.get(key) || 0) + item.cents);
+    }
+    get('no-results').hidden = groups.size > 0;
+    get('breakdown').replaceChildren(...Array.from(groups.entries())
+      .sort((a,b) => b[1] - a[1]).map(([label,cents]) => row(label, '', cents)));
+  }
+  function setSubcategories() {
+    const category = get('category').value;
+    const previously = get('subcategory').value;
+    const options = [...new Set(purchases.filter(purchase => !category || purchase.category === category)
+      .map(purchase => purchase.subcategory))].sort((a,b) => a.localeCompare(b, 'ru'));
+    get('subcategory').replaceChildren(...['', ...options].map(value => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = value || 'Все подкатегории';
+      return option;
+    }));
+    get('subcategory').value = options.includes(previously) ? previously : '';
+  }
+  const goesHome = () => screen === 'overview' || (screen === 'report' && reportFromHome);
+  function render() {
+    const titles = {overview:'Финансы', report:'Отчёт о расходах', income:'Новый доход'};
+    get('title').textContent = titles[screen];
+    get('back').setAttribute('aria-label', goesHome() ? 'На главную' : 'Назад к финансам');
+    get('overview').setAttribute('aria-pressed', String(screen === 'overview'));
+    get('from-home').setAttribute('aria-pressed', String(screen === 'report'));
+    get('offline').setAttribute('aria-pressed', String(offline));
+    get('offline-note').hidden = !offline;
+    get('add-income').disabled = offline;
+    get('income-save').disabled = offline;
+    root.querySelectorAll('[data-screen]').forEach(section => {
+      section.hidden = section.dataset.screen !== screen;
+    });
+    if (screen === 'overview') renderOverview();
+    if (screen === 'report') renderReport();
+  }
+  function open(next) {
+    screen = next;
+    render();
+    get('title').focus();
+  }
+  function clearIncomeError() {
+    get('income-error').hidden = true;
+    get('income-error').textContent = '';
+  }
+
+  get('overview').addEventListener('click', () => open('overview'));
+  get('back').addEventListener('click', () => {
+    if (goesHome()) root.dispatchEvent(new Event('rutina-home-requested'));
+    else open('overview');
+  });
+  get('from-home').addEventListener('click', () => {
+    reportFromHome = true;
+    get('period').value = 'month';
+    get('report-month').value = '2026-11';
+    get('category').value = '';
+    get('person').value = '';
+    setSubcategories();
+    get('subcategory').value = '';
+    open('report');
+  });
+  get('open-report').addEventListener('click', () => {
+    reportFromHome = false;
+    get('period').value = 'month';
+    get('report-month').value = get('overview-month').value;
+    open('report');
+  });
+  get('offline').addEventListener('click', () => { offline = !offline; render(); });
+  get('overview-month').addEventListener('change', renderOverview);
+  get('category').addEventListener('change', () => { setSubcategories(); renderReport(); });
+  for (const name of ['period','report-month','year','person','subcategory','start','end']) {
+    get(name).addEventListener('change', renderReport);
+  }
+  get('add-income').addEventListener('click', () => {
+    if (offline) return;
+    get('income-amount').value = '';
+    get('income-date').value = today;
+    get('income-date').min = accountingStart;
+    get('income-date').max = today;
+    get('income-category').value = '';
+    get('income-comment').value = '';
+    clearIncomeError();
+    open('income');
+  });
+  get('income-form').addEventListener('submit', event => {
+    event.preventDefault();
+    if (offline) return;
+    const amount = get('income-amount').value.trim().match(/^([0-9]+)(?:[,.]([0-9]{1,2}))?$/);
+    const cents = amount ? Number(amount[1]) * 100 + Number((amount[2] || '').padEnd(2, '0')) : null;
+    const date = get('income-date').value;
+    const category = get('income-category').value;
+    const error = !Number.isSafeInteger(cents) ? ['income-amount','Введите сумму в рублях с точностью до копеек.'] :
+      !date || date < accountingStart || date > today ? ['income-date','Укажите дату получения с начала учёта по сегодняшний день.'] :
+      !category ? ['income-category','Выберите категорию дохода.'] : null;
+    if (error) {
+      get('income-error').textContent = error[1];
+      get('income-error').hidden = false;
+      get(error[0]).focus();
+      return;
+    }
+    incomes.push({name:category, date, cents, comment:get('income-comment').value.trim()});
+    open('overview');
+  });
+  setSubcategories();
+  render();
+})();
+</script>
+</div>
+</section>
+<script>
+(() => {
+  const root = document.getElementById('rutina-design-review');
+  const recordPanel = root.querySelector('#rutina-records');
+  const financePanel = root.querySelector('#rutina-finances');
+  let financeLink;
+  const isRecordHome = () => !recordPanel.querySelector('[data-screen="home"]').hidden;
+
+  function showPanel(key) {
+    for (const panel of root.querySelectorAll('[data-review-panel]')) {
+      panel.hidden = panel.dataset.reviewPanel !== key;
+    }
+    for (const button of root.querySelectorAll('.rv-controls button')) {
+      button.setAttribute('aria-pressed', String(button.dataset.reviewGo === key));
+    }
+    if (key === 'home') {
+      if (!isRecordHome()) recordPanel.querySelector('[data-preview="home"]').click();
+      const homePurchase = root.querySelector('#rutina-home [data-record="purchase"]');
+      const homeTask = root.querySelector('#rutina-home [data-record="task"]');
+      homePurchase.closest('section').hidden = recordPanel.querySelector('#rr-home-purchase').hidden;
+      homeTask.closest('li').hidden = recordPanel.querySelector('#rr-home-task').hidden;
+    }
+  }
+
+  for (const link of root.querySelectorAll('[data-review-go]')) {
+    link.addEventListener('click', () => {
+      const {reviewGo, record, appScreen, financeEntry} = link.dataset;
+      showPanel(reviewGo);
+      if (reviewGo === 'cards' && (record || isRecordHome())) {
+        recordPanel.querySelector('[data-preview="' + (record || 'task') + '"]').click();
+      }
+      if (appScreen) root.querySelector('#rutina-calendar-cabinet [data-screen="' + appScreen + '"]').click();
+      if (financeEntry) {
+        financeLink = link;
+        financePanel.querySelector('#' + financeEntry).click();
+      }
+    });
+  }
+  financePanel.addEventListener('rutina-home-requested', () => {
+    showPanel('home');
+    financeLink?.focus();
+  });
+  recordPanel.querySelector('#rr-back').addEventListener('click', () => {
+    if (isRecordHome()) {
+      showPanel('home');
+      root.querySelector('.rv-controls [data-review-go="home"]').focus();
+    }
+  });
+})();
+</script>
+</div>
+</body>
+</html>

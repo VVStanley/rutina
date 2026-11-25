@@ -1,0 +1,36 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+/.aws/
+/.codex/
+*.jks
+*.keystore
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+/server/dist/
+/server/build/
+
+# Android and Gradle
+/android/.gradle/
+/android/.kotlin/
+/android/**/build/
+/android/local.properties
+/android/**/.cxx/
+/android/**/.externalNativeBuild/
+*.apk
+*.aab
+
+# Editors and OS
+.idea/
+.DS_Store

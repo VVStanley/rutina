@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Рутина — Заметки</title>
+  <link rel="stylesheet" href="scenario.css">
+  <script src="scenario.js" defer></script>
+  <script src="notes.js" defer></script>
+</head>
+<body>
+  <div class="demo" aria-label="Prototype controls">
+    <a id="review" href="review-index.html">Все макеты</a>
+    <label>Язык макета / Preview language
+      <select id="locale"><option value="ru">Русский</option><option value="en">English</option></select>
+    </label>
+  </div>
+  <main class="phone">
+    <header class="bar"><button type="button" id="back" hidden>←</button><h1 tabindex="-1">Заметки</h1></header>
+    <div class="screen"></div>
+  </main>
+  <dialog aria-labelledby="confirm-title"></dialog>
+</body>
+</html>

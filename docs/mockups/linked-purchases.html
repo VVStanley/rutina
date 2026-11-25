@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Рутина — Покупки и связь с делом</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0 auto; max-width: 920px; padding: 16px; font: 14px/1.45 system-ui, sans-serif; }
+    .vis-btn, .vis-form-select { padding: 6px 12px; border: 1px solid GrayText; border-radius: 8px; }
+    .vis-btn { cursor: pointer; }
+  </style>
+</head>
+<body>
+<div id="rutina-linked">
+<style>
+#rutina-linked {
+  color-scheme:light dark;
+  --surface:light-dark(#f6f8f3,#171d19); --card:light-dark(#fff,#222a24);
+  --text:light-dark(#202d24,#ecf4ed); --muted:light-dark(#4a5b50,#b7c6bb);
+  --line:light-dark(#dae3d9,#3d4a40); --accent:light-dark(#154f3b,#b6edce);
+  --soft:light-dark(#dceee2,#2b4838); --on-accent:light-dark(#fff,#13291e);
+  --error:light-dark(#8f3524,#ffbeaa);
+  font:14px/1.45 system-ui,sans-serif;
+}
+#rutina-linked * { box-sizing:border-box; }
+#rutina-linked [hidden] { display:none !important; }
+#rutina-linked .rl-controls { display:flex; justify-content:center; margin:0 auto 12px; }
+#rutina-linked .rl-controls [aria-pressed=true] { background:var(--soft); color:var(--accent); }
+#rutina-linked .rl-phone { max-width:410px; min-height:540px; margin:auto; overflow:hidden; display:flex; flex-direction:column; border:1px solid var(--line); border-radius:24px; background:var(--surface); color:var(--text); }
+#rutina-linked .rl-bar { display:flex; align-items:center; gap:6px; padding:10px 14px; min-height:58px; border-bottom:1px solid var(--line); }
+#rutina-linked .rl-bar h3 { margin:0; font-size:19px; }
+#rutina-linked .rl-body { flex:1; padding:15px 15px 18px; min-width:0; }
+#rutina-linked .rl-body h4 { margin:0 0 7px; font-size:23px; line-height:1.2; overflow-wrap:anywhere; }
+#rutina-linked .rl-body h5 { margin:0; font-size:15px; }
+#rutina-linked .rl-muted { color:var(--muted); font-size:12px; }
+#rutina-linked .rl-note { margin:0 0 12px; padding:8px 10px; border:1px solid var(--line); border-radius:9px; background:var(--card); }
+#rutina-linked .rl-pill { display:inline-block; padding:4px 8px; border-radius:7px; background:var(--soft); color:var(--accent); font-size:12px; font-weight:680; margin-bottom:10px; }
+#rutina-linked .rl-phone button, #rutina-linked .rl-phone input:not([type=checkbox]):not([type=radio]), #rutina-linked select, #rutina-linked textarea { min-height:44px; border:1px solid var(--line); border-radius:9px; padding:6px 10px; font:inherit; color:inherit; background:var(--card); min-width:0; }
+#rutina-linked .rl-phone button { cursor:pointer; }
+#rutina-linked .rl-phone :focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+#rutina-linked .rl-phone .rl-primary { background:var(--accent); color:var(--on-accent); border-color:transparent; font-weight:690; }
+#rutina-linked .rl-phone button:disabled { background:var(--soft); color:var(--muted); cursor:default; }
+#rutina-linked .rl-bar .rl-back { border-color:transparent; background:transparent; }
+#rutina-linked .rl-section { margin-top:16px; }
+#rutina-linked .rl-heading { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:7px; }
+#rutina-linked .rl-list, #rutina-linked .rl-actions { display:grid; gap:6px; }
+#rutina-linked .rl-actions { margin-top:12px; }
+#rutina-linked .rl-row { width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; text-align:left; }
+#rutina-linked .rl-row strong { display:block; overflow-wrap:anywhere; }
+#rutina-linked .rl-row small { color:var(--muted); font-size:12px; }
+#rutina-linked .rl-facts { margin:0; padding:4px 10px; background:var(--card); border:1px solid var(--line); border-radius:11px; }
+#rutina-linked .rl-facts div { display:grid; grid-template-columns:1fr minmax(0,1fr); gap:8px; padding:8px 0; }
+#rutina-linked .rl-facts div + div { border-top:1px solid var(--line); }
+#rutina-linked .rl-facts dt { color:var(--muted); font-size:12px; }
+#rutina-linked .rl-facts dd { text-align:right; margin:0; overflow-wrap:anywhere; }
+#rutina-linked .rl-facts .rl-comment { grid-template-columns:1fr; gap:3px; }
+#rutina-linked .rl-facts .rl-comment dd { text-align:left; white-space:pre-wrap; }
+#rutina-linked .rl-choice { display:grid; grid-template-columns:auto minmax(0,1fr); gap:8px; align-items:center; min-height:48px; padding:7px 9px; border:1px solid var(--line); border-radius:9px; background:var(--card); }
+#rutina-linked .rl-choice input, #rutina-linked fieldset input { accent-color:var(--accent); }
+#rutina-linked .rl-choice:has(input:disabled) { color:var(--muted); }
+#rutina-linked .rl-form { display:grid; gap:8px; }
+#rutina-linked .rl-form > label, #rutina-linked .rl-grid label { display:grid; gap:3px; min-width:0; font-weight:630; }
+#rutina-linked .rl-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+#rutina-linked .rl-form fieldset { margin:0; min-width:0; border:1px solid var(--line); border-radius:9px; padding:6px 8px; }
+#rutina-linked .rl-form fieldset label { display:inline-flex; align-items:center; min-height:36px; margin-right:6px; }
+#rutina-linked .rl-form textarea { resize:vertical; }
+#rutina-linked .rl-form p { margin:0; }
+#rutina-linked .rl-error { color:var(--error); }
+#rutina-linked .rl-nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; padding:7px; border-top:1px solid var(--line); background:var(--card); }
+#rutina-linked .rl-nav [aria-current=page] { background:var(--soft); color:var(--accent); font-weight:680; }
+</style>
+<div class="rl-controls">
+  <button type="button" class="vis-btn" id="rl-offline" aria-pressed="false">Без сети</button>
+</div>
+<div class="rl-phone" lang="ru">
+  <header class="rl-bar">
+    <button type="button" class="rl-back" id="rl-back" aria-label="Назад" hidden>←</button>
+    <h3 id="rl-title" tabindex="-1">Дело</h3>
+  </header>
+  <div class="rl-body">
+    <p class="rl-note rl-muted" id="rl-offline-note" hidden>Без сети. Доступен просмотр сохранённых записей.</p>
+    <section data-screen="task">
+      <h4>Заменить фильтр</h4><span class="rl-pill">Не выполнено</span>
+      <dl class="rl-facts">
+        <div><dt>Запланировано</dt><dd>20 ноября, 18:30</dd></div>
+        <div><dt>Для кого</dt><dd>Семья</dd></div>
+        <div><dt>Повтор</dt><dd>Каждые 2 месяца</dd></div>
+        <div class="rl-comment"><dt>Комментарий</dt><dd>Перед заменой перекрыть подачу воды.</dd></div>
+      </dl>
+      <section class="rl-section" aria-labelledby="rl-linked-title">
+        <div class="rl-heading"><h5 id="rl-linked-title">Связанные покупки</h5><button type="button" id="rl-add" aria-expanded="false" aria-controls="rl-add-actions">＋ <span>Добавить</span></button></div>
+        <div class="rl-list" id="rl-linked-list"></div>
+        <p class="rl-muted" id="rl-linked-empty" hidden>У дела пока нет связанных покупок.</p>
+        <div class="rl-actions" id="rl-add-actions" hidden>
+          <button type="button" id="rl-create-linked">Создать покупку</button>
+          <button type="button" id="rl-select">Выбрать существующие</button>
+        </div>
+      </section>
+    </section>
+    <section data-screen="purchases" hidden>
+      <div class="rl-heading"><h5>Все покупки</h5><button type="button" class="rl-primary" id="rl-create-standalone">Добавить покупку</button></div>
+      <div class="rl-list" id="rl-all-list"></div>
+    </section>
+    <section data-screen="pick" hidden>
+      <p class="rl-muted">Привязать к делу «Заменить фильтр»</p>
+      <div class="rl-list" id="rl-choices"></div>
+      <p class="rl-muted" id="rl-pick-empty" hidden>Все покупки уже связаны с делами.</p>
+      <div class="rl-actions"><button type="button" class="rl-primary" id="rl-link">Привязать выбранные</button></div>
+    </section>
+    <section data-screen="detail" hidden>
+      <h4 id="rl-detail-name"></h4><span class="rl-pill" id="rl-detail-status"></span>
+      <dl class="rl-facts">
+        <div id="rl-price-row"><dt id="rl-detail-price-label">Цена</dt><dd id="rl-detail-price"></dd></div>
+        <div id="rl-date-row"><dt id="rl-detail-date-label">Купить не позднее</dt><dd id="rl-detail-date"></dd></div>
+        <div><dt>Категория</dt><dd id="rl-detail-category"></dd></div>
+        <div><dt>Получатель</dt><dd id="rl-detail-recipient"></dd></div>
+        <div id="rl-task-row"><dt>Связанное дело</dt><dd id="rl-detail-task"></dd></div>
+        <div class="rl-comment" id="rl-comment-row"><dt>Комментарий</dt><dd id="rl-detail-comment"></dd></div>
+      </dl>
+      <div class="rl-actions">
+        <button type="button" class="rl-primary" id="rl-edit">Редактировать</button>
+        <button type="button" id="rl-unlink">Отвязать от дела</button>
+        <a id="rl-refunds" href="refunds.html?purchase=key" hidden>Возвраты</a>
+      </div>
+    </section>
+    <section data-screen="form" hidden>
+      <form class="rl-form" id="rl-form" novalidate>
+        <p class="rl-note rl-muted" id="rl-form-task" hidden></p>
+        <fieldset id="rl-status-field">
+          <legend>Состояние</legend>
+          <label><input type="radio" name="rl-status" id="rl-plan" value="planned" checked> Запланирована</label>
+          <label><input type="radio" name="rl-status" id="rl-bought" value="bought"> Куплена</label>
+        </fieldset>
+        <label>Название<input id="rl-name" required></label>
+        <div class="rl-grid">
+          <label><span id="rl-price-label">Цена, ₽</span><input id="rl-price" inputmode="decimal"></label>
+          <label><span id="rl-date-label">Купить не позднее</span><input type="date" id="rl-date"></label>
+        </div>
+        <label>Категория<select id="rl-category" required>
+          <option value="">Выберите категорию</option>
+          <option>Дом → Хозтовары</option>
+          <option>Дом → Ремонт</option>
+        </select></label>
+        <label>Получатель<select id="rl-recipient"><option>Семья</option><option>Марина</option><option>Алексей</option></select></label>
+        <label>Комментарий <span class="rl-muted">(необязательно)</span><textarea rows="2" id="rl-comment"></textarea></label>
+        <p id="rl-error" class="rl-error" role="alert" hidden></p>
+        <button type="submit" class="rl-primary" id="rl-save">Сохранить</button>
+      </form>
+    </section>
+  </div>
+  <nav class="rl-nav" id="rl-nav" aria-label="Экраны сценария">
+    <button type="button" data-nav="task" aria-current="page">Дело</button><button type="button" data-nav="purchases">Покупки</button>
+  </nav>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('rutina-linked');
+  const get = id => root.querySelector('#rl-' + id);
+  const all = selector => root.querySelectorAll(selector);
+  const today = '2026-11-19';
+  const accountingStart = '2026-10-01';
+  const task = 'Заменить фильтр';
+  const initial = [
+    {id:1, name:'Фильтр для воды', bought:false, kopecks:89000, date:today, category:'Дом → Хозтовары', recipient:'Семья', comment:'Сверить маркировку со старым картриджем.', task},
+    {id:2, name:'Уплотнительное кольцо', bought:false, kopecks:null, date:'', category:'Дом → Ремонт', recipient:'Семья', comment:'', task:''},
+    {id:3, name:'Ключ для колбы', bought:true, kopecks:45000, date:'2026-11-17', category:'Дом → Хозтовары', recipient:'Марина', comment:'', task:''},
+    {id:4, name:'Шланг для стиральной машины', bought:false, kopecks:65000, date:'', category:'Дом → Ремонт', recipient:'Семья', comment:'', task:'Подключить стиральную машину'}
+  ];
+  const purchases = initial.slice();
+  const selected = new Set();
+  let screen = 'task';
+  let previous = 'task';
+  let selectedId;
+  let editingId;
+  let fromTask = false;
+  let offline = false;
+  let menu = false;
+  let nextId = 5;
+  let formDateMode = 'planned';
+  let formDates;
+
+  const amount = value => new Intl.NumberFormat('ru', {style:'currency', currency:'RUB', minimumFractionDigits:0, maximumFractionDigits:2}).format(value / 100);
+  const date = value => new Intl.DateTimeFormat('ru', {day:'numeric', month:'long', timeZone:'UTC'}).format(new Date(value + 'T00:00:00Z'));
+  const status = item => item.bought ? 'Куплена' : 'Запланирована';
+  const current = () => purchases.find(item => item.id === selectedId);
+
+  function row(item, inTask) {
+    const button = document.createElement('button');
+    const info = document.createElement('span');
+    const name = document.createElement('strong');
+    const meta = document.createElement('small');
+    const total = document.createElement('strong');
+    button.type = 'button';
+    button.className = 'rl-row';
+    name.textContent = item.name;
+    meta.textContent = status(item) + (item.date ? ' · ' + (item.bought ? '' : 'не позднее ') + date(item.date) : '');
+    total.textContent = item.kopecks === null ? '' : amount(item.kopecks);
+    info.append(name, meta);
+    button.append(info, total);
+    button.addEventListener('click', () => {
+      selectedId = item.id;
+      previous = inTask ? 'task' : 'purchases';
+      go('detail');
+    });
+    return button;
+  }
+
+  function renderList() {
+    const linked = purchases.filter(item => item.task === task);
+    get('linked-empty').hidden = linked.length > 0;
+    get('linked-list').replaceChildren(...linked.map(item => row(item, true)));
+    get('all-list').replaceChildren(...purchases.map(item => row(item, false)));
+  }
+
+  function renderPicker() {
+    const candidates = purchases.filter(item => item.task !== task);
+    get('pick-empty').hidden = candidates.some(item => !item.task);
+    get('choices').replaceChildren(...candidates.map(item => {
+      const label = document.createElement('label');
+      const check = document.createElement('input');
+      const info = document.createElement('span');
+      const name = document.createElement('strong');
+      const meta = document.createElement('small');
+      label.className = 'rl-choice';
+      meta.className = 'rl-muted';
+      check.type = 'checkbox';
+      check.checked = selected.has(item.id);
+      check.disabled = offline || Boolean(item.task);
+      name.textContent = item.name;
+      meta.textContent = item.task ? 'Связана с делом «' + item.task + '»' : status(item);
+      meta.style.display = 'block';
+      info.append(name, meta);
+      label.append(check, info);
+      check.addEventListener('change', () => {
+        if (check.checked) selected.add(item.id);
+        else selected.delete(item.id);
+        get('link').disabled = offline || selected.size === 0;
+      });
+      return label;
+    }));
+    get('link').disabled = offline || selected.size === 0;
+  }
+
+  function renderDetail() {
+    const item = current();
+    get('detail-name').textContent = item.name;
+    get('detail-status').textContent = status(item);
+    get('price-row').hidden = item.kopecks === null;
+    get('detail-price-label').textContent = item.bought ? 'Фактическая сумма' : 'Цена';
+    get('detail-price').textContent = item.kopecks === null ? '' : amount(item.kopecks);
+    get('date-row').hidden = !item.date;
+    get('detail-date-label').textContent = item.bought ? 'Дата покупки' : 'Купить не позднее';
+    get('detail-date').textContent = item.date ? date(item.date) : '';
+    get('detail-category').textContent = item.category;
+    get('detail-recipient').textContent = item.recipient;
+    get('task-row').hidden = !item.task;
+    get('detail-task').textContent = item.task;
+    get('comment-row').hidden = !item.comment;
+    get('detail-comment').textContent = item.comment;
+    get('unlink').hidden = !item.task;
+    get('refunds').hidden = !item.bought || item.id !== 3;
+    get('refunds').href = 'refunds.html?purchase=key' + (offline ? '&offline=1' : '');
+  }
+
+  function render() {
+    const titles = {task:'Дело', purchases:'Покупки', pick:'Выбрать покупки', detail:'Покупка', form:editingId ? 'Редактировать покупку' : 'Новая покупка'};
+    get('title').textContent = titles[screen];
+    all('[data-screen]').forEach(section => { section.hidden = section.dataset.screen !== screen; });
+    const top = screen === 'task' || screen === 'purchases';
+    get('nav').hidden = !top;
+    get('back').hidden = top;
+    all('[data-nav]').forEach(button => {
+      if (button.dataset.nav === screen) button.setAttribute('aria-current', 'page');
+      else button.removeAttribute('aria-current');
+    });
+    get('offline').setAttribute('aria-pressed', String(offline));
+    get('offline-note').hidden = !offline;
+    for (const id of ['add','create-standalone','create-linked','select','edit','unlink','save']) get(id).disabled = offline;
+    get('add-actions').hidden = !menu;
+    get('add').setAttribute('aria-expanded', String(menu));
+    if (top) renderList();
+    if (screen === 'pick') renderPicker();
+    if (screen === 'detail') renderDetail();
+  }
+
+  function go(next) {
+    screen = next;
+    menu = false;
+    render();
+    get('title').focus();
+  }
+
+  function formError(text) {
+    get('error').hidden = !text;
+    get('error').textContent = text;
+  }
+
+  function renderFields() {
+    const bought = get('bought').checked;
+    get('price-label').textContent = bought ? 'Фактическая сумма, ₽' : 'Цена, ₽ (необязательно)';
+    get('price').required = bought;
+    get('date-label').textContent = bought ? 'Дата покупки' : 'Купить не позднее (необязательно)';
+    get('date').required = bought;
+    get('date').min = bought ? accountingStart : '';
+    get('date').max = bought ? today : '';
+  }
+
+  function openForm(linked, item) {
+    if (offline) return;
+    editingId = item?.id;
+    fromTask = linked;
+    get('status-field').hidden = Boolean(item);
+    get('plan').checked = !item?.bought;
+    get('bought').checked = Boolean(item?.bought);
+    get('name').value = item?.name || '';
+    get('price').value = item?.kopecks === null || !item ? '' : String(item.kopecks / 100).replace('.', ',');
+    formDateMode = item?.bought ? 'bought' : 'planned';
+    formDates = {planned:'', bought:today, [formDateMode]:item?.date || ''};
+    get('date').value = formDates[formDateMode];
+    get('category').value = item?.category || '';
+    get('recipient').value = item?.recipient || 'Семья';
+    get('comment').value = item?.comment || '';
+    const related = item?.task || (linked ? task : '');
+    get('form-task').hidden = !related;
+    get('form-task').textContent = related ? 'Связанное дело — «' + related + '»' : '';
+    formError('');
+    renderFields();
+    go('form');
+  }
+
+  all('[data-nav]').forEach(button => button.addEventListener('click', () => go(button.dataset.nav)));
+  get('offline').addEventListener('click', () => { offline = !offline; render(); });
+  get('add').addEventListener('click', () => {
+    if (offline) return;
+    menu = !menu;
+    render();
+    if (menu) get('create-linked').focus();
+  });
+  get('create-linked').addEventListener('click', () => openForm(true));
+  get('create-standalone').addEventListener('click', () => openForm(false));
+  get('select').addEventListener('click', () => {
+    if (offline) return;
+    selected.clear();
+    go('pick');
+  });
+  get('link').addEventListener('click', () => {
+    if (offline || !selected.size) return;
+    for (const item of purchases) {
+      if (!item.task && selected.has(item.id)) item.task = task;
+    }
+    selected.clear();
+    go('task');
+  });
+  get('edit').addEventListener('click', () => openForm(false, current()));
+  get('unlink').addEventListener('click', () => {
+    if (offline) return;
+    current().task = '';
+    go(previous);
+  });
+  get('back').addEventListener('click', () => {
+    if (screen === 'pick') return go('task');
+    if (screen === 'detail') return go(previous);
+    go(editingId ? 'detail' : (fromTask ? 'task' : 'purchases'));
+  });
+  for (const key of ['plan','bought']) get(key).addEventListener('change', () => {
+    formDates[formDateMode] = get('date').value;
+    formDateMode = get('bought').checked ? 'bought' : 'planned';
+    get('date').value = formDates[formDateMode];
+    renderFields();
+  });
+  get('form').addEventListener('submit', event => {
+    event.preventDefault();
+    if (offline) return;
+    const bought = get('bought').checked;
+    const name = get('name').value.trim();
+    const price = get('price').value.trim();
+    const purchaseDate = get('date').value;
+    const category = get('category').value;
+    const match = price.match(/^([0-9]+)(?:[,.]([0-9]{1,2}))?$/);
+    const kopecks = match ? Number(match[1]) * 100 + Number((match[2] || '').padEnd(2,'0')) : null;
+    const error = !name ? ['name','Введите название.'] :
+      ((price || bought) && !Number.isSafeInteger(kopecks)) ? ['price','Введите сумму в рублях с точностью до копеек.'] :
+      (bought && (!purchaseDate || purchaseDate < accountingStart || purchaseDate > today)) ? ['date','Укажите дату покупки с начала учёта по сегодняшний день.'] :
+      !category ? ['category','Выберите категорию.'] : null;
+    if (error) {
+      formError(error[1]);
+      get(error[0]).focus();
+      return;
+    }
+    const values = {name, bought, kopecks, date:purchaseDate, category, recipient:get('recipient').value, comment:get('comment').value.trim()};
+    if (editingId) {
+      Object.assign(current(), values);
+      return go('detail');
+    }
+    purchases.unshift({...values, id:nextId++, task:fromTask ? task : ''});
+    go(fromTask ? 'task' : 'purchases');
+  });
+  render();
+})();
+</script>
+</div>
+</body>
+</html>
