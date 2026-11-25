@@ -15,6 +15,7 @@ Android-приложение для семейного бюджета и орг�
 - [AGENTS.md](AGENTS.md) — инструкции для работы над проектом.
 - [PRODUCT.md](docs/PRODUCT.md) — подтверждённые требования и права.
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md) — согласованный стек, [структура проекта](docs/ARCHITECTURE.md#структура-проекта) и устройство приложения.
+- [DATABASE_CONVENTIONS.md](docs/database/DATABASE_CONVENTIONS.md) — поэтапное развитие схемы PostgreSQL и Room, правила целостности и проверки миграций.
 - [CODING_STANDARDS.md](docs/CODING_STANDARDS.md) — правила программирования и проверки для Python и Kotlin.
 - [DESIGN.md](docs/DESIGN.md) — согласованные макеты, правила и открытые вопросы дизайна.
 - [MASTER_PLAN.md](plans/MASTER_PLAN.md) — порядок реализации, следующий шаг и работа с подпланами.
