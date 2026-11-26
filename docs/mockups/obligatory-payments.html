@@ -135,19 +135,25 @@
     <section data-screen="confirm" hidden>
       <h4 id="rs-confirm-name"></h4>
       <p class="rs-note" id="rs-confirm-date"></p>
-      <p class="rs-note" id="rs-list-changed" role="alert" hidden>Один из платежей уже оплатили. Проверьте обновлённый список и подтвердите его ещё раз.</p>
-      <section aria-labelledby="rs-remove-title">
+      <p class="rs-note" id="rs-list-changed" role="alert" hidden>Список платежей изменился. Проверьте его и подтвердите ещё раз.</p>
+      <section id="rs-blocked" aria-labelledby="rs-blocked-title" hidden>
+        <h4 class="rs-error" id="rs-blocked-title">За новой датой окончания есть оплаченные будущие платежи</h4>
+        <ul class="rs-payments" id="rs-blocked-list"></ul>
+        <p class="rs-note">Выберите более позднюю дату окончания. Если отметка об оплате ошибочна, снимите её в карточке платежа и попробуйте снова.</p>
+      </section>
+      <section id="rs-removal" aria-labelledby="rs-remove-title">
         <h4 id="rs-remove-title">Уберутся из плана</h4>
         <ul class="rs-payments" id="rs-remove-list"></ul>
         <p class="rs-muted" id="rs-remove-empty" hidden>Будущих платежей для исключения нет.</p>
         <p class="rs-muted" id="rs-more" hidden></p>
       </section>
       <section class="rs-section" id="rs-kept" aria-labelledby="rs-kept-title" hidden>
-        <h4 id="rs-kept-title">Оплаченные и просроченные сохранятся</h4>
+        <h4 id="rs-kept-title">Оплаченные и платежи со сроком сегодня или раньше сохранятся</h4>
         <ul class="rs-payments" id="rs-kept-list"></ul>
       </section>
       <div class="rs-actions">
         <button type="button" class="rs-primary" id="rs-confirm">Подтвердить окончание</button>
+        <button type="button" class="rs-primary" id="rs-change-cutoff" hidden>Изменить дату окончания</button>
         <button type="button" id="rs-cancel">Отмена</button>
       </div>
     </section>
@@ -213,8 +219,8 @@
   function dueDate(first, month) {
     return month + '-' + String(Math.min(Number(first.slice(8)), lastDay(month))).padStart(2, '0');
   }
-  function settings(scheme, month) {
-    return scheme.changes.findLast(change => change.month <= month)?.values || scheme.base;
+  function settings(scheme, month, due) {
+    return scheme.changes.findLast(change => change.month <= month && (!due || due > change.savedOn))?.values || scheme.base;
   }
   function entries(scheme, through) {
     const records = [];
@@ -228,8 +234,8 @@
       const due = paid?.due || manual?.due || scheduled;
       const late = due < today && !paid;
       if (scheme.endAtCreation && scheduled > scheme.endAtCreation && !paid) continue;
-      if (scheme.end !== scheme.endAtCreation && scheme.end && due > scheme.end && !paid && !late) continue;
-      const data = late ? scheme.base : settings(scheme, month);
+      if (scheme.excludedAfter && due > scheme.excludedAfter && !paid) continue;
+      const data = settings(scheme, month, due);
       records.push({key:scheme.id + ':' + month, schemeId:scheme.id, cadence:scheme.cadence, month, ...data,
         ...manual, ...paid, due, paid:paid?.date || '', late, manual:Boolean(manual)});
     }
@@ -297,24 +303,37 @@
   function plan() {
     const payments = entries(selected,horizon(selected,cutoff));
     const after = payments.filter(payment => payment.due > cutoff);
+    const blockers = Object.values(selected.paid)
+      .filter(payment => payment.due > cutoff && payment.due > today)
+      .sort((first, second) => first.due.localeCompare(second.due))
+      .map(payment => ({...payment, paid:payment.date}));
     return {
-      remove:after.filter(payment => !payment.paid && !payment.late),
-      protected:payments.filter(payment => payment.paid || payment.late).slice(-4)
+      blockers,
+      remove:after.filter(payment => !payment.paid && payment.due > today),
+      protected:payments.filter(payment => payment.paid || payment.due <= today).slice(-4)
     };
   }
   const planKeys = plan => plan.remove.map(payment => payment.month).join(',');
   function renderConfirm() {
     const currentPlan = plan();
+    const blocked = currentPlan.blockers.length > 0;
+    get('title').textContent = blocked ? 'Окончание недоступно' : 'Подтвердить окончание';
     get('confirm-name').textContent = settings(selected,'9999-12').name;
     get('confirm-date').textContent = 'Дата окончания — ' + dateText(cutoff) + '.';
-    get('list-changed').hidden = !changed;
+    get('list-changed').hidden = blocked || !changed;
+    get('blocked').hidden = !blocked;
+    get('blocked-list').replaceChildren(...currentPlan.blockers.map(paymentRow));
+    get('removal').hidden = blocked;
+    get('confirm').hidden = blocked;
+    get('confirm').disabled = offline || blocked;
+    get('change-cutoff').hidden = !blocked;
     get('remove-list').replaceChildren(...currentPlan.remove.slice(0,6).map(paymentRow));
     get('remove-empty').hidden = currentPlan.remove.length > 0;
     get('more').hidden = currentPlan.remove.length <= 6;
     get('more').textContent = 'Показаны ближайшие платежи. Остальные будущие неоплаченные повторения после даты окончания также уберутся.';
-    get('kept').hidden = currentPlan.protected.length === 0;
+    get('kept').hidden = blocked || currentPlan.protected.length === 0;
     get('kept-list').replaceChildren(...currentPlan.protected.map(paymentRow));
-    get('race').hidden = offline || !currentPlan.remove.some(payment => payment.cents !== null);
+    get('race').hidden = offline || blocked || !currentPlan.remove.some(payment => payment.cents !== null);
     get('test-controls').hidden = get('race').hidden;
     get('race').disabled = false;
   }
@@ -369,6 +388,7 @@
     open('cutoff');
   });
   get('cancel').addEventListener('click', () => open('detail'));
+  get('change-cutoff').addEventListener('click', () => open('cutoff'));
   get('back').addEventListener('click', () => {
     if (screen === 'list' || (screen === 'detail' && openedFromPayment)) return workflow.returnToCalendar();
     if (screen === 'form') return open(formMode === 'create' ? 'list' : 'detail');
@@ -393,8 +413,7 @@
     if (issue) { error('form-error',issue); return; }
     const values = {name,cents,category,person:get('form-person').value};
     if (edit) {
-      selected.changes = selected.changes.filter(change => change.month < month);
-      selected.changes.push({month,values});
+      selected.changes.push({month, savedOn:today, values});
     } else {
       selected = {id:nextId++,first,end,endAtCreation:end,cadence:get('form-cadence').value,base:values,changes:[],manual:{},paid:{}};
       schemes.push(selected);
@@ -424,12 +443,22 @@
   });
   get('confirm').addEventListener('click', () => {
     if (offline || screen !== 'confirm') return;
-    const latest = planKeys(plan());
+    const currentPlan = plan();
+    if (currentPlan.blockers.length) {
+      renderConfirm();
+      get('title').focus();
+      return;
+    }
+    const latest = planKeys(currentPlan);
     if (latest !== confirmationKeys) {
       confirmationKeys = latest;
       changed = true;
       render();
       return;
+    }
+    const excludedAfter = cutoff > today ? cutoff : today;
+    if (!selected.excludedAfter || excludedAfter < selected.excludedAfter) {
+      selected.excludedAfter = excludedAfter;
     }
     selected.end = cutoff;
     open('detail');
@@ -456,6 +485,12 @@
       } else {
         scheme.manual[record.month] = {...scheme.manual[record.month], ...values};
       }
+    },
+    clearPayment(record) {
+      const scheme = schemes.find(item => item.id === record.schemeId);
+      const {cents, due, category, person} = record;
+      scheme.manual[record.month] = {...scheme.manual[record.month], cents, due, category, person};
+      delete scheme.paid[record.month];
     },
     setOffline(value) { offline = value; render(); }
   };
@@ -589,8 +624,16 @@
       <p class="rp-note rp-muted" id="rp-expense-note" hidden></p>
       <div class="rp-actions">
         <button type="button" class="rp-primary" id="rp-pay">Подтвердить оплату</button>
+        <button type="button" id="rp-unpay" hidden>Снять отметку об оплате</button>
         <button type="button" id="rp-edit">Изменить только этот платёж</button>
         <button type="button" id="rp-open-schedule">Открыть расписание</button>
+      </div>
+    </section>
+    <section data-screen="advance" hidden>
+      <p class="rp-note" id="rp-advance-description"></p>
+      <div class="rp-actions">
+        <button type="button" class="rp-primary" id="rp-advance-confirm">Подтвердить оплату заранее</button>
+        <button type="button" id="rp-advance-back">Вернуться</button>
       </div>
     </section>
     <section data-screen="form" hidden>
@@ -620,6 +663,7 @@
   let active;
   let selectedDay;
   let editMode;
+  let advancePayment;
   let offline = false;
   const currency = new Intl.NumberFormat('ru', {style:'currency', currency:'RUB', minimumFractionDigits:0, maximumFractionDigits:2});
   const dates = new Intl.DateTimeFormat('ru', {day:'numeric', month:'long', year:'numeric', timeZone:'UTC'});
@@ -727,17 +771,18 @@
     get('expense-note').hidden = !record.paid;
     get('expense-note').textContent = record.paid ? 'Учтено в расходах по дате оплаты — ' + dateLabel(record.paid) + '.' : '';
     get('pay').hidden = Boolean(record.paid);
+    get('unpay').hidden = !record.paid;
     get('edit').hidden = false;
   }
 
   function render() {
-    const titles = {calendar:'Календарь', summary:'Предстоящие платежи', detail:'Обязательный платёж', form:editMode === 'pay' ? 'Подтвердить оплату' : 'Изменить один платёж'};
+    const titles = {calendar:'Календарь', summary:'Предстоящие платежи', detail:'Обязательный платёж', form:editMode === 'pay' ? 'Подтвердить оплату' : 'Изменить один платёж', advance:'Оплата заранее'};
     get('title').textContent = titles[screen];
     get('back').hidden = screen === 'calendar';
     get('offline-note').hidden = !offline;
     all('[data-screen]').forEach(section => { section.hidden = section.dataset.screen !== screen; });
     all('[data-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === screen)));
-    for (const id of ['pay','edit','save']) get(id).disabled = offline;
+    for (const id of ['pay','unpay','edit','save','advance-confirm']) get(id).disabled = offline;
     if (screen === 'calendar') renderCalendar();
     if (screen === 'summary') renderSummary();
     if (screen === 'detail') renderDetail();
@@ -782,9 +827,18 @@
     open('summary');
   });
   for (const id of ['period','summary-month','year']) get(id).addEventListener('change', renderSummary);
-  get('back').addEventListener('click', () => open(screen === 'form' ? 'detail' : screen === 'detail' ? previous : 'calendar'));
+  get('back').addEventListener('click', () => {
+    if (screen === 'advance') return open('form');
+    open(screen === 'form' ? 'detail' : screen === 'detail' ? previous : 'calendar');
+  });
   get('edit').addEventListener('click', () => openForm('edit'));
   get('pay').addEventListener('click', () => openForm('pay'));
+  get('unpay').addEventListener('click', () => {
+    const record = current();
+    if (offline || !record.paid) return;
+    workflow.schedules.clearPayment(record);
+    open('detail');
+  });
   get('form').addEventListener('submit', event => {
     event.preventDefault();
     if (offline || screen !== 'form') return;
@@ -804,7 +858,22 @@
     }
     const values = {cents, [paying ? 'paid' : 'due']:date};
     if (editMode === 'edit') Object.assign(values, {category:get('category').value, person:get('person').value});
+    if (editMode === 'pay' && record.due > today) {
+      advancePayment = values;
+      get('advance-description').textContent = record.name + ' · срок ' + dateLabel(record.due) +
+        '. Подтвердите, что уже оплатили ' + money(cents) + ' ' + dateLabel(date) + '.';
+      open('advance');
+      return;
+    }
     workflow.schedules.updatePayment(record, values);
+    open('detail');
+  });
+  get('advance-back').addEventListener('click', () => open('form'));
+  get('advance-confirm').addEventListener('click', () => {
+    if (offline || screen !== 'advance') return;
+    const record = current();
+    if (!record || record.paid) return open(record ? 'detail' : previous);
+    workflow.schedules.updatePayment(record, advancePayment);
     open('detail');
   });
   workflow.calendar = {
