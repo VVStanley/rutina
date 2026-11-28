@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+/compose.local.network.yaml
 /.aws/
 /.codex/
 *.jks

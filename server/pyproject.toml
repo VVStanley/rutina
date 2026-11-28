@@ -1,0 +1,45 @@
+[project]
+name = "rutina-server"
+version = "0.1.0"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "anyio>=4,<5",
+    "fastapi>=0.141.1,<1",
+    "psycopg[binary]>=3.3.4,<4",
+    "pydantic>=2.13.4,<3",
+    "pydantic-settings>=2.15.0,<3",
+    "sqlalchemy>=2.0.51,<2.1",
+    "uvicorn>=0.52.1,<1",
+]
+
+[dependency-groups]
+dev = [
+    "httpx2==2.12.0",
+    "mypy>=1.19,<2",
+    "pytest==9.1.1",
+    "ruff==0.15.22",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pydantic-mypy]
+init_typed = true
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "--strict-markers --import-mode=importlib"
+markers = ["integration: needs an isolated PostgreSQL instance"]

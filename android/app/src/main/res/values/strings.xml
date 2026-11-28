@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Rutina</string>
+    <string name="check_connection">Check connection</string>
+    <string name="connection_checking">Checking the connection…</string>
+    <string name="connection_success">Connected to the server.</string>
+    <string name="connection_unavailable">Cannot reach the server. Check your Wi-Fi and try again.</string>
+    <string name="connection_api_error">The server returned an error. Try again.</string>
+</resources>

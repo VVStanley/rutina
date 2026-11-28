@@ -1,0 +1,45 @@
+services:
+  database:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${RUTINA_DATABASE_NAME:-rutina}
+      POSTGRES_USER: ${RUTINA_DATABASE_USER:-rutina}
+      POSTGRES_PASSWORD: ${RUTINA_DATABASE_PASSWORD:?Set RUTINA_DATABASE_PASSWORD in .env}
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 2s
+      timeout: 3s
+      retries: 20
+      start_period: 3m
+    volumes:
+      - database:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./server
+      target: runtime
+    environment:
+      RUTINA_ENVIRONMENT: ${RUTINA_ENVIRONMENT:-local}
+      RUTINA_DATABASE_HOST: database
+      RUTINA_DATABASE_NAME: ${RUTINA_DATABASE_NAME:-rutina}
+      RUTINA_DATABASE_USER: ${RUTINA_DATABASE_USER:-rutina}
+      RUTINA_DATABASE_PASSWORD: ${RUTINA_DATABASE_PASSWORD:?Set RUTINA_DATABASE_PASSWORD in .env}
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - |
+          from urllib.request import urlopen
+
+          with urlopen("http://127.0.0.1:8000/health", timeout=4) as response:
+              raise SystemExit(response.status != 204)
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  database:

@@ -1,0 +1,8 @@
+services:
+  api:
+    environment:
+      RUTINA_ENVIRONMENT: local
+    ports:
+      - host_ip: ${RUTINA_API_BIND_ADDRESS:-127.0.0.1}
+        target: 8000
+        published: "8000"

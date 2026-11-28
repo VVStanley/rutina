@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Рутина</string>
+    <string name="check_connection">Проверить подключение</string>
+    <string name="connection_checking">Проверяем подключение…</string>
+    <string name="connection_success">Подключение к серверу установлено.</string>
+    <string name="connection_unavailable">Сервер недоступен. Проверьте Wi-Fi и попробуйте снова.</string>
+    <string name="connection_api_error">Сервер вернул ошибку. Попробуйте снова.</string>
+</resources>

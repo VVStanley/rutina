@@ -1,0 +1,29 @@
+services:
+  database:
+    image: postgres:17
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_DB: rutina_test
+      POSTGRES_USER: rutina_test
+      POSTGRES_PASSWORD: rutina-test-fixture
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 2s
+      timeout: 3s
+      retries: 20
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  tests:
+    build:
+      context: ./server
+      target: test
+    environment:
+      RUTINA_ENVIRONMENT: test
+      RUTINA_DATABASE_HOST: database
+      RUTINA_DATABASE_NAME: rutina_test
+      RUTINA_DATABASE_USER: rutina_test
+      RUTINA_DATABASE_PASSWORD: rutina-test-fixture
+    depends_on:
+      database:
+        condition: service_healthy
